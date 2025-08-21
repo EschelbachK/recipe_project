@@ -2,7 +2,6 @@ package com.ecosystem.backend.services;
 
 import com.ecosystem.backend.dto.RecipeDTO;
 import com.ecosystem.backend.exception.RecipeNotFoundException;
-import com.ecosystem.backend.models.Ingredient;
 import com.ecosystem.backend.models.Recipe;
 import com.ecosystem.backend.repository.RecipeRepository;
 import org.springframework.stereotype.Service;
@@ -57,8 +56,4 @@ public class RecipeService {
     public void deleteRecipe(String id) {
         repository.deleteById(id);
     }
-
-    //public List<Ingredient> generateShoppingList(List<String> recipeIds) {
-    //    // Platzhalter für Logik
-    //    return List.of();
 }
