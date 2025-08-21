@@ -1,7 +1,6 @@
 package com.ecosystem.backend.controller;
 
 import com.ecosystem.backend.dto.RecipeDTO;
-import com.ecosystem.backend.models.Ingredient;
 import com.ecosystem.backend.models.Recipe;
 import com.ecosystem.backend.services.RecipeService;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +40,5 @@ public class RecipeController {
     @DeleteMapping("/{id}")
     public void deleteRecipe(@PathVariable String id) {
         service.deleteRecipe(id);
-    }
-
-    @PostMapping("/shopping-list")
-    public List<Ingredient> generateShoppingList(@RequestBody List<String> recipeIds) {
-        return service.generateShoppingList(recipeIds);
     }
 }
