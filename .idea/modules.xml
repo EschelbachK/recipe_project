@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/book-library.iml" filepath="$PROJECT_DIR$/book-library.iml" />
       <module fileurl="file://$PROJECT_DIR$/frontend/frontend.iml" filepath="$PROJECT_DIR$/frontend/frontend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/recipe_project.iml" filepath="$PROJECT_DIR$/recipe_project.iml" />
     </modules>
   </component>
 </project>
