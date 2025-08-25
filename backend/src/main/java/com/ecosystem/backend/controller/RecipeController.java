@@ -3,12 +3,13 @@ package com.ecosystem.backend.controller;
 import com.ecosystem.backend.dto.RecipeDTO;
 import com.ecosystem.backend.models.Recipe;
 import com.ecosystem.backend.services.RecipeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/recipe")
+@RequestMapping("/api/recipes")
 public class RecipeController {
 
     private final RecipeService service;
@@ -28,6 +29,7 @@ public class RecipeController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Recipe createRecipe(@RequestBody RecipeDTO dto) {
         return service.createRecipe(dto);
     }
@@ -38,6 +40,7 @@ public class RecipeController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRecipe(@PathVariable String id) {
         service.deleteRecipe(id);
     }
