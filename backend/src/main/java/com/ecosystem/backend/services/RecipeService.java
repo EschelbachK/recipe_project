@@ -12,9 +12,9 @@ import java.util.List;
 public class RecipeService {
 
     private final RecipeRepository repository;
-    private final com.ecosystem.backend.services.IdService idService;
+    private final IdService idService;
 
-    public RecipeService(RecipeRepository repository, com.ecosystem.backend.services.IdService idService) {
+    public RecipeService(RecipeRepository repository, IdService idService) {
         this.repository = repository;
         this.idService = idService;
     }
@@ -29,12 +29,13 @@ public class RecipeService {
     }
 
     public Recipe createRecipe(RecipeDTO dto) {
+
         Recipe recipe = new Recipe(
                 idService.generateId(),
-                dto.title(),
-                dto.description(),
+                dto.name(),
+                dto.servings(),
                 dto.ingredients(),
-                dto.instructions()
+                dto.description()
         );
         return repository.save(recipe);
     }
@@ -45,10 +46,10 @@ public class RecipeService {
 
         Recipe updated = new Recipe(
                 existing.id(),
-                dto.title(),
-                dto.description(),
+                dto.name(),
+                dto.servings(),
                 dto.ingredients(),
-                dto.instructions()
+                dto.description()
         );
         return repository.save(updated);
     }
