@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser
 class RecipeControllerTest {
 
     @Autowired
@@ -28,128 +30,165 @@ class RecipeControllerTest {
     RecipeRepository recipeRepo;
 
     @BeforeEach
-    void cleanDb() {
+    void clearDb() {
+
+        // GIVEN
         recipeRepo.deleteAll();
     }
 
     @Test
     void getAllRecipes_initiallyEmpty() throws Exception {
+
+        // WHEN + THEN
         mockMvc.perform(get("/api/recipes"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[]"));
+                .andExpect(content().json("[]"))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test
     void createRecipe() throws Exception {
+
+        // GIVEN
+        String json = """
+                {
+                  "name": "Kartoffelsalat",
+                  "servings": 3,
+                  "ingredients": [
+                    {"id": "i1", "name": "Kartoffeln", "amount": 800.0, "unit": "G"},
+                    {"id": "i2", "name": "Essiggurken", "amount": 120.0, "unit": "G"},
+                    {"id": "i3", "name": "Zwiebel", "amount": 1.0, "unit": "PIECE"}
+                  ],
+                  "description": "Klassischer Kartoffelsalat mit Essig-Öl-Dressing"
+                }
+                """;
+
+        // WHEN+THEN
         mockMvc.perform(post("/api/recipes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "name": "Pancakes",
-                                  "servings": 4,
-                                  "ingredients": [
-                                    {"id": "1", "name": "Flour", "amount": 200.0, "unit": "G"},
-                                    {"id": "2", "name": "Milk", "amount": 300.0, "unit": "ML"},
-                                    {"id": "3", "name": "Eggs", "amount": 2.0, "unit": "PIECE"}
-                                  ],
-                                  "description": "Simple fluffy pancakes"
-                                }
-                                """))
+                        .content(json))
                 .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").isNotEmpty())
-                .andExpect(jsonPath("$.name").value("Pancakes"))
-                .andExpect(jsonPath("$.servings").value(4.0))
+                .andExpect(jsonPath("$.name").value("Kartoffelsalat"))
+                .andExpect(jsonPath("$.servings").value(3.0))
                 .andExpect(jsonPath("$.ingredients.length()").value(3))
-                .andExpect(jsonPath("$.ingredients[0].name").value("Flour"))
-                .andExpect(jsonPath("$.ingredients[1].name").value("Milk"))
-                .andExpect(jsonPath("$.ingredients[2].name").value("Eggs"))
-                .andExpect(jsonPath("$.description").value("Simple fluffy pancakes"));
+                .andExpect(jsonPath("$.ingredients[0].name").value("Kartoffeln"))
+                .andExpect(jsonPath("$.ingredients[1].name").value("Essiggurken"))
+                .andExpect(jsonPath("$.ingredients[2].name").value("Zwiebel"))
+                .andExpect(jsonPath("$.description").value("Klassischer Kartoffelsalat mit Essig-Öl-Dressing"));
     }
 
     @Test
     void updateRecipe() throws Exception {
+
+        // GIVEN
         Recipe existing = new Recipe(
-                "1",
-                "Basic Pancakes",
+                "r1",
+                "Tomatensuppe",
                 2.0,
                 List.of(
-                        new Ingredient("1", "Flour", 150.0, Unit.G),
-                        new Ingredient("2", "Milk", 200.0, Unit.ML)
+                        new Ingredient("i1", "Tomaten", 400.0, Unit.G),
+                        new Ingredient("i2", "Zwiebel", 1.0, Unit.PIECE)
                 ),
-                "Old pancake recipe"
+                "Einfache Suppe"
         );
         recipeRepo.save(existing);
 
-        mockMvc.perform(put("/api/recipes/1")
+        String updateJson = """
+                {
+                  "name": "Geröstete Tomatensuppe",
+                  "servings": 3,
+                  "ingredients": [
+                    {"id": "i1", "name": "Tomaten", "amount": 600.0, "unit": "G"},
+                    {"id": "i2", "name": "Zwiebel", "amount": 1.0, "unit": "PIECE"},
+                    {"id": "i3", "name": "Knoblauch", "amount": 1.0, "unit": "PIECE"}
+                  ],
+                  "description": "Tomatensuppe mit Ofenaroma"
+                }
+                """;
+
+        // WHEN+THEN
+        mockMvc.perform(put("/api/recipes/r1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "name": "Banana Pancakes",
-                                  "servings": 4,
-                                  "ingredients": [
-                                    {"id": "1", "name": "Flour", "amount": 200.0, "unit": "G"},
-                                    {"id": "2", "name": "Milk", "amount": 300.0, "unit": "ML"},
-                                    {"id": "3", "name": "Banana", "amount": 2.0, "unit": "PIECE"}
-                                  ],
-                                  "description": "Pancakes with mashed bananas"
-                                }
-                                """))
+                        .content(updateJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("Banana Pancakes"))
-                .andExpect(jsonPath("$.servings").value(4.0))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value("r1"))
+                .andExpect(jsonPath("$.name").value("Geröstete Tomatensuppe"))
+                .andExpect(jsonPath("$.servings").value(3.0))
                 .andExpect(jsonPath("$.ingredients.length()").value(3))
-                .andExpect(jsonPath("$.ingredients[0].name").value("Flour"))
-                .andExpect(jsonPath("$.ingredients[1].name").value("Milk"))
-                .andExpect(jsonPath("$.ingredients[2].name").value("Banana"))
-                .andExpect(jsonPath("$.description").value("Pancakes with mashed bananas"));
+                .andExpect(jsonPath("$.ingredients[0].name").value("Tomaten"))
+                .andExpect(jsonPath("$.ingredients[1].name").value("Zwiebel"))
+                .andExpect(jsonPath("$.ingredients[2].name").value("Knoblauch"))
+                .andExpect(jsonPath("$.description").value("Tomatensuppe mit Ofenaroma"));
     }
 
     @Test
     void getRecipeById() throws Exception {
+
+        // GIVEN
         Recipe existing = new Recipe(
-                "1",
-                "Omelette",
-                1.0,
+                "r2",
+                "Linsencurry",
+                4.0,
                 List.of(
-                        new Ingredient("1", "Eggs", 3.0, Unit.PIECE),
-                        new Ingredient("2", "Cheese", 50.0, Unit.G),
-                        new Ingredient("3", "Salt", 1.0, Unit.G)
+                        new Ingredient("i1", "Rote Linsen", 250.0, Unit.G),
+                        new Ingredient("i2", "Kokosmilch", 400.0, Unit.ML),
+                        new Ingredient("i3", "Zwiebel", 1.0, Unit.PIECE)
                 ),
-                "Quick breakfast omelette"
+                "Cremiges Curry"
         );
         recipeRepo.save(existing);
 
-        mockMvc.perform(get("/api/recipes/1"))
+        // WHEN+THEN
+        mockMvc.perform(get("/api/recipes/r2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("1"))
-                .andExpect(jsonPath("$.name").value("Omelette"))
-                .andExpect(jsonPath("$.servings").value(1.0))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value("r2"))
+                .andExpect(jsonPath("$.name").value("Linsencurry"))
+                .andExpect(jsonPath("$.servings").value(4.0))
                 .andExpect(jsonPath("$.ingredients.length()").value(3))
-                .andExpect(jsonPath("$.ingredients[0].name").value("Eggs"))
-                .andExpect(jsonPath("$.ingredients[1].name").value("Cheese"))
-                .andExpect(jsonPath("$.ingredients[2].name").value("Salt"))
-                .andExpect(jsonPath("$.description").value("Quick breakfast omelette"));
+                .andExpect(jsonPath("$.ingredients[0].name").value("Rote Linsen"))
+                .andExpect(jsonPath("$.ingredients[1].name").value("Kokosmilch"))
+                .andExpect(jsonPath("$.ingredients[2].name").value("Zwiebel"))
+                .andExpect(jsonPath("$.description").value("Cremiges Curry"));
     }
 
     @Test
     void getRecipeById_notFound() throws Exception {
-        mockMvc.perform(get("/api/recipes/999"))
+
+        // WHEN+THEN
+        mockMvc.perform(get("/api/recipes/does-not-exist"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void deleteRecipe() throws Exception {
+
+        // GIVEN
         Recipe existing = new Recipe(
-                "1",
-                "Test Recipe",
+                "r3",
+                "Brotzeit",
                 1.0,
-                List.of(new Ingredient("1", "Ingredient1", 100.0, Unit.G)),
-                "Desc"
+                List.of(
+                        new Ingredient("i1", "Brot", 2.0, Unit.PIECE),
+                        new Ingredient("i2", "Käse", 80.0, Unit.G)
+                ),
+                "Einfach und gut"
         );
         recipeRepo.save(existing);
 
-        mockMvc.perform(delete("/api/recipes/1"))
+        // WHEN+THEN
+        mockMvc.perform(delete("/api/recipes/r3"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteRecipe_notFound() throws Exception {
+
+        // WHEN+THEN
+        mockMvc.perform(delete("/api/recipes/missing"))
+                .andExpect(status().isNotFound());
     }
 }
