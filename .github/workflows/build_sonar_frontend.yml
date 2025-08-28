@@ -17,9 +17,3 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=eschelbachk_recipe_project_frontend
-            -Dsonar.organization=eschelbachk
-            -Dsonar.sources=frontend/src
-            -Dsonar.coverage.exclusions=frontend/src/**
