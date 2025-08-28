@@ -41,20 +41,22 @@ public class RecipeService {
     }
 
     public Recipe updateRecipe(String id, RecipeDTO dto) {
-        Recipe existing = repository.findById(id)
-                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id " + id));
-
-        Recipe updated = new Recipe(
-                existing.id(),
+        if (!repository.existsById(id)) {
+            throw new RecipeNotFoundException("Recipe not found with id " + id);
+        }
+        return repository.save(new Recipe(
+                id,
                 dto.name(),
                 dto.servings(),
                 dto.ingredients(),
                 dto.description()
-        );
-        return repository.save(updated);
+        ));
     }
 
     public void deleteRecipe(String id) {
+        if (!repository.existsById(id)) {
+            throw new RecipeNotFoundException("Recipe not found with id " + id);
+        }
         repository.deleteById(id);
     }
 }
