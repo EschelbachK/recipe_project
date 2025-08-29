@@ -38,6 +38,8 @@ jobs:
         working-directory: backend
         run: >
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.2.0.4988:sonar
+          -Dsonar.projectKey=eschelbachk_recipe_project_backend
+          -Dsonar.organization=eschelbachk
           -Dsonar.project.settings=../backend-sonar-project.properties
 
   frontend:
