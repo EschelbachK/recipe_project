@@ -11,6 +11,8 @@ type URL = {
     RECIPE_ID: (id: string) => string
     RECIPE_EDIT_ID: (id: string) => string
     LOGIN: string
+    FAVORITES: string
+    SHOPPING_LIST: string
 }
 
 type API = {
@@ -28,7 +30,9 @@ export const routerConfig: RouterConfig = {
         RECIPE_EDIT: "/recipes/:id/edit",
         RECIPE_ID: (id: string) => `/recipes/${id}`,
         RECIPE_EDIT_ID: (id: string) => `/recipes/${id}/edit`,
-        LOGIN: "/login"
+        LOGIN: "/login",
+        FAVORITES: "/favorites",
+        SHOPPING_LIST: "/shopping-list"
     },
     API: {
         RECIPES: "/api/recipes",
