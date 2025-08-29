@@ -1,25 +1,28 @@
-import { BrowserRouter } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Router } from "./router/Router";
-import type { AppUser } from "./types/types";
+import { BrowserRouter } from "react-router-dom"
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { Router } from "./router/Router"
+import type { AppUser } from "./types/types"
 
 export default function App() {
-    const [user, setUser] = useState<AppUser | null | undefined>(undefined);
+    const [user, setUser] = useState<AppUser | null | undefined>(undefined)
 
     useEffect(() => {
-        axios
-            .get<AppUser>("/api/auth/me", { withCredentials: true })
-            .then((r) => setUser(r.data))
-            .catch((e) => {
-                if (e?.response?.status === 401) setUser(null);
-                else setUser(null);
-            });
-    }, []);
+        const loadUser = async () => {
+            try {
+                const res = await axios.get<AppUser>("/api/auth/me", { withCredentials: true })
+                setUser(res.data)
+            } catch {
+                setUser(null)
+            }
+        }
+
+        void loadUser()
+    }, [])
 
     return (
         <BrowserRouter>
-            <Router user={user} />
+            <Router user={user}/>
         </BrowserRouter>
-    );
+    )
 }
