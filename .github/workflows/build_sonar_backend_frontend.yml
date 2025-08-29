@@ -38,7 +38,7 @@ jobs:
         working-directory: backend
         run: >
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-          -Dproject.settings=../backend-sonar-project.properties
+          -Dsonar.project.settings=../backend-sonar-project.properties
 
   frontend:
     name: Frontend Analysis
