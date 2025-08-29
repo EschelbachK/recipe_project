@@ -10,12 +10,12 @@ class AppUserTest {
     void appUser_builderCreatesUserWithAllFields() {
         AppUser user = AppUser.builder()
                 .id("42")
-                .username("testuser")
+                .username("testUser")
                 .avatarUrl("http://img")
                 .build();
 
         assertEquals("42", user.id());
-        assertEquals("testuser", user.username());
+        assertEquals("testUser", user.username());
         assertEquals("http://img", user.avatarUrl());
     }
 
