@@ -53,4 +53,4 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          args: -Dproject.settings=frontend-sonar-project.properties
+          args: -Dsonar.project.settings=frontend-sonar-project.properties
