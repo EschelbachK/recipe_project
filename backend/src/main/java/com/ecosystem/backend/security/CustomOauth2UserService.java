@@ -24,8 +24,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
         return oAuth2User;
     }
-
-
     private void createAndSaveUser(OAuth2User oAuth2User) {
         AppUser newUser = AppUser.builder()
                 .id(oAuth2User.getName())
@@ -36,3 +34,4 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         appUserRepository.save(newUser);
     }
 }
+
