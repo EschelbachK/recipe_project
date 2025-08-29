@@ -55,4 +55,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          args: -Dsonar.project.settings=frontend-sonar-project.properties
+         args: >
+            -Dsonar.projectKey=eschelbachk_recipe_project_frontend
+            -Dsonar.organization=eschelbachk
+            -Dsonar.project.settings=../frontend-sonar-project.properties
