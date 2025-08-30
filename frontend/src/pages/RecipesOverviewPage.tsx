@@ -1,89 +1,70 @@
-import axios from "axios";
-import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import type {Recipe} from "../types/types";
+import axios from "axios"
+import {useEffect, useState} from "react"
+import {useNavigate} from "react-router-dom"
+import type {Recipe} from "../types/types"
+import RecipeGallery from "../components/RecipeGallery"
+import {routerConfig} from "../router/routerConfig"
 
 export default function RecipesOverviewPage() {
-    const [recipes, setRecipes] = useState<Recipe[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const navigate = useNavigate();
+    const [recipes, setRecipes] = useState<Recipe[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const navigate = useNavigate()
 
     async function loadRecipes() {
-        setLoading(true);
-        setError(null);
-
+        setLoading(true)
+        setError(null)
         try {
-            const response = await axios.get<Recipe[]>("/api/recipes", {withCredentials: true});
-            setRecipes(response.data);
+            const response = await axios.get<Recipe[]>(routerConfig.API.RECIPES, {withCredentials: true})
+            setRecipes(response.data)
         } catch {
-            setError("Fehler beim Laden der Rezepte!");
+            setError("Fehler beim Laden der Rezepte!")
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     }
 
     useEffect(() => {
-        loadRecipes();
-    }, []);
+        void loadRecipes()
+    }, [])
 
     async function deleteRecipe(id: string) {
-        const confirmed = confirm("Rezept wirklich löschen?");
-        if (!confirmed) return;
-
+        const confirmed = confirm("Rezept wirklich löschen?")
+        if (!confirmed) return
         try {
-            await axios.delete(`/api/recipes/${id}`, {withCredentials: true});
-            loadRecipes();
+            await axios.delete(routerConfig.API.RECIPE_ID(id), {withCredentials: true})
+            void loadRecipes()
         } catch {
-            alert("Rezept konnte nicht gelöscht werden.");
+            alert("Rezept konnte nicht gelöscht werden.")
         }
     }
 
-    function logout() {
-        fetch("/logout", {method: "POST", credentials: "include"})
-            .finally(() => (window.location.href = "/login"));
+    function editRecipe(id: string) {
+        navigate(routerConfig.URL.RECIPE_EDIT_ID(id))
     }
 
-    if (loading) {
-        return <p>Lade Rezepte...</p>;
+    function favoriteRecipe(_id: string) {
+        alert("Favoriten sind bald verfügbar!")
     }
 
-    if (error) {
-        return (
-            <div>
-                <p>{error}</p>
-                <button onClick={loadRecipes}>Erneut versuchen</button>
-            </div>
-        );
+    function addToShopping(_id: string) {
+        alert("Einkaufsliste ist bald verfügbar!")
     }
+
+    if (loading) return <p>Lade Rezepte...</p>
+    if (error) return <p>{error}</p>
 
     return (
         <div>
             <h2>Meine Rezepte</h2>
-
-            <button onClick={() => navigate("/recipes/new")}>
-                Neues Rezept hinzufügen
-            </button>
-
-            {recipes.length === 0 ? (
-                <p>Keine Rezepte vorhanden.</p>
-            ) : (
-                <ul>
-                    {recipes.map((recipe) => (
-                        <li key={recipe.id}>
-                            <b>{recipe.name}</b>{" "}
-                            <button onClick={() => navigate(`/recipes/${recipe.id}`)}>Öffnen</button>
-                            {" "}
-                            <button onClick={() => navigate(`/recipes/${recipe.id}/edit`)}>Bearbeiten</button>
-                            {" "}
-                            <button onClick={() => deleteRecipe(recipe.id)}>Löschen</button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-
-            <button onClick={logout}>Logout</button>
+            <button onClick={() => navigate(routerConfig.URL.RECIPE_NEW)}>Neues Rezept hinzufügen</button>
+            <RecipeGallery
+                recipes={recipes}
+                onDelete={deleteRecipe}
+                onEdit={editRecipe}
+                onFavorite={favoriteRecipe}
+                onAddToShopping={addToShopping}
+            />
         </div>
-    );
+    )
 }
