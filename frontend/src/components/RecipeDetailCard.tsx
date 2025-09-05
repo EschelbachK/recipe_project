@@ -1,4 +1,10 @@
-import type {Recipe} from "../types/types"
+import type { Recipe } from "../types/types"
+import RecipeCover from "./RecipeCover"
+import FavButton from "./buttons/FavButton"
+import EditButton from "./buttons/EditButton"
+import DeleteButton from "./buttons/DeleteButton"
+import ShoppingButton from "./buttons/ShoppingButton"
+import "./RecipeDetailCard.css"
 
 type Props = {
     recipe: Recipe
@@ -13,33 +19,53 @@ export default function RecipeDetailCard({
                                              onEdit,
                                              onDelete,
                                              onFavorite,
-                                             onAddToShopping
+                                             onAddToShopping,
                                          }: Readonly<Props>) {
-
     return (
-        <div style={{border: "1px solid #ccc", padding: "1rem", marginBottom: "1rem", background: "black"}}>
-            <h2>{recipe.name}</h2>
-            <p>Portionen: {recipe.servings}</p>
-            {recipe.description && <p>{recipe.description}</p>}
+        <div className="detail-card">
+            <RecipeCover name={recipe.name} />
+            <h2 className="detail-title">{recipe.name}</h2>
 
-            <h3>Zutaten</h3>
-            {recipe.ingredients && recipe.ingredients.length > 0 ? (
-                <ul>
-                    {recipe.ingredients.map(i => (
-                        <li key={i.id}>
-                            {i.name} — {i.amount} {i.unit}
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>Keine Zutaten.</p>
-            )}
+            <div className="detail-section">
+                <span className="detail-section-title">Portionen:</span>
+                <span className="detail-plain">{recipe.servings}</span>
+            </div>
 
-            <div style={{marginTop: "1rem", display: "flex", gap: "0.5rem"}}>
-                <button onClick={onFavorite}>FAV❤️</button>
-                <button onClick={onEdit}>EDIT✏️</button>
-                <button onClick={onDelete}>DEL🗑️</button>
-                <button onClick={onAddToShopping}>EL🛒</button>
+            <div className="detail-section">
+                <h3 className="detail-section-title">Zutaten:</h3>
+                <div className="ingredients-box">
+                    {recipe.ingredients.length > 0 ? (
+                        <ul>
+                            {recipe.ingredients.map(i => (
+                                <li key={i.id}>
+                                    {i.name} — {i.amount} {i.unit}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>Keine Zutaten vorhanden.</p>
+                    )}
+                </div>
+            </div>
+
+            <div className="detail-section">
+                <h3 className="detail-section-title">Zubereitung:</h3>
+                <div className="description-box">
+                    {recipe.description ? (
+                        <p>{recipe.description}</p>
+                    ) : (
+                        <p>Keine Beschreibung vorhanden.</p>
+                    )}
+                </div>
+            </div>
+
+            <div className="divider" />
+
+            <div className="button-row">
+                <FavButton onClick={onFavorite} />
+                <EditButton onClick={onEdit} />
+                <DeleteButton onClick={onDelete} />
+                <ShoppingButton onClick={onAddToShopping} />
             </div>
         </div>
     )
