@@ -1,6 +1,11 @@
-import {useNavigate} from "react-router-dom"
-import type {Recipe} from "../types/types"
-import {routerConfig} from "../router/routerConfig"
+import { routerConfig } from "../router/routerConfig"
+import type { Recipe } from "../types/types"
+import RecipeCover from "./RecipeCover"
+import FavButton from "./buttons/FavButton"
+import EditButton from "./buttons/EditButton"
+import DeleteButton from "./buttons/DeleteButton"
+import ShoppingButton from "./buttons/ShoppingButton"
+import "./RecipeCard.css"
 
 type Props = {
     recipe: Recipe
@@ -15,36 +20,26 @@ export default function RecipeCard({
                                        onFavorite,
                                        onEdit,
                                        onDelete,
-                                       onAddToShopping
+                                       onAddToShopping,
                                    }: Readonly<Props>) {
-
-    const navigate = useNavigate()
-
-    function openDetail() {
-        navigate(routerConfig.URL.RECIPE_ID(recipe.id))
-    }
-
     return (
-        <button
-            onClick={openDetail}
-            style={{
-                border: "1px solid #ccc",
-                padding: "1rem",
-                marginBottom: "1rem",
-                textAlign: "left",
-                cursor: "pointer",
-                background: "white",
-                color: "black"
-            }}
-        >
-            <h3>{recipe.name}</h3>
-            <p>Portionen: {recipe.servings}</p>
-            <div style={{display: "flex", gap: "0.5rem"}}>
-                <button onClick={(e) => { e.stopPropagation(); onFavorite() }}>FAV❤️</button>
-                <button onClick={(e) => { e.stopPropagation(); onEdit() }}>EDIT✏️</button>
-                <button onClick={(e) => { e.stopPropagation(); onDelete() }}>DEL🗑️</button>
-                <button onClick={(e) => { e.stopPropagation(); onAddToShopping() }}>EL🛒</button>
+        <article className="card">
+            <a
+                href={routerConfig.URL.RECIPE_ID(recipe.id)}
+                className="card-click-area"
+            >
+                <RecipeCover name={recipe.name} />
+                <div className="card-body">
+                    <h3>{recipe.name}</h3>
+                    <p>Servings: {recipe.servings}</p>
+                </div>
+            </a>
+            <div className="card-actions">
+                <FavButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFavorite() }} />
+                <EditButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit() }} />
+                <DeleteButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete() }} />
+                <ShoppingButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAddToShopping() }} />
             </div>
-        </button>
+        </article>
     )
 }
