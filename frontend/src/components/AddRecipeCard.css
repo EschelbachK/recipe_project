@@ -1,0 +1,37 @@
+.add-card {
+    display: flex;
+    flex-direction: column;
+    border: 2px dashed #91D6FF;
+    border-radius: var(--radius, 12px);
+    background: white;
+    color: #91D6FF;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: var(--shadow, 0 0 6px rgba(0, 0, 0, 0.05));
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.card-image {
+    background: transparent;
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-symbol {
+    font-size: 8rem;
+    font-weight: 500;
+}
+
+.add-content {
+    padding: 1rem;
+    text-align: center;
+}
+
+.add-content span {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #91D6FF;
+}
