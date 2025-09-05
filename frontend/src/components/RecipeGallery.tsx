@@ -1,5 +1,7 @@
-import type {Recipe} from "../types/types"
+import type { Recipe } from "../types/types"
 import RecipeCard from "./RecipeCard"
+import AddRecipeCard from "./AddRecipeCard"
+import "./RecipeGallery.css"
 
 type Props = {
     recipes: Recipe[]
@@ -14,24 +16,25 @@ export default function RecipeGallery({
                                           onDelete,
                                           onEdit,
                                           onFavorite,
-                                          onAddToShopping
+                                          onAddToShopping,
                                       }: Readonly<Props>) {
-    if (recipes.length === 0) {
-        return <p>Keine Rezepte vorhanden.</p>
-    }
-
     return (
-        <div style={{display: "grid", gap: "1rem"}}>
-            {recipes.map(r => (
-                <RecipeCard
-                    key={r.id}
-                    recipe={r}
-                    onDelete={() => onDelete(r.id)}
-                    onEdit={() => onEdit(r.id)}
-                    onFavorite={() => onFavorite(r.id)}
-                    onAddToShopping={() => onAddToShopping(r.id)}
-                />
-            ))}
+        <div className="gallery">
+            <AddRecipeCard />
+            {recipes.length === 0 ? (
+                <p>Keine Rezepte vorhanden.</p>
+            ) : (
+                recipes.map(r => (
+                    <RecipeCard
+                        key={r.id}
+                        recipe={r}
+                        onDelete={() => onDelete(r.id)}
+                        onEdit={() => onEdit(r.id)}
+                        onFavorite={() => onFavorite(r.id)}
+                        onAddToShopping={() => onAddToShopping(r.id)}
+                    />
+                ))
+            )}
         </div>
     )
 }
