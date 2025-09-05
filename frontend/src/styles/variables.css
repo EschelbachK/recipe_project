@@ -1,0 +1,25 @@
+:root {
+
+    --color-bg: #ffffff;
+    --color-bg-dark: rgb(194, 230, 251);
+    --color-bg-page: #f7f9fc;
+    --color-text: #222222;
+    --color-border: rgba(87, 87, 87, 0.49);
+
+    --color-primary: rgb(144, 212, 253);
+    --color-primary-hover: #7fcaf7;
+
+    --color-danger: #e74c3c;
+    --color-success: #27ae60;
+
+
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
+
+    --radius: 6px;
+    --shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+    --font-base: system-ui, Avenir, Helvetica, Arial, segeo ui;
+}
