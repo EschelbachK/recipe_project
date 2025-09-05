@@ -19,4 +19,7 @@ export type Recipe = {
     name: string;
     description: string;
     servings: number;
-    ingredients: Ingredient[] };
+    ingredients: Ingredient[];
+    coverUrl?: string;
+}
+

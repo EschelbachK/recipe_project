@@ -1,10 +1,11 @@
-import {NavLink} from "react-router-dom"
-import {routerConfig} from "../router/routerConfig"
+import { NavLink } from "react-router-dom"
+import { routerConfig } from "../router/routerConfig"
+import "./Sidebar.css"
 
 export default function Sidebar() {
     return (
-        <aside style={{width: "200px", padding: "1rem", borderRight: "1px solid #ccc", minHeight: "100vh"}}>
-            <ul style={{listStyle: "none", padding: 0}}>
+        <aside className="sidebar">
+            <ul className="sidebar-list">
                 <li>
                     <NavLink to={routerConfig.URL.RECIPES}>Meine Rezepte</NavLink>
                 </li>

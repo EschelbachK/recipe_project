@@ -1,0 +1,41 @@
+.sidebar {
+    min-width: 200px;
+    padding: 1rem;
+    min-height: 100vh;
+    background: transparent;
+    font-weight: 600;
+}
+
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar a {
+    display: block;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    color: #000;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar a:hover {
+    background-color: #91D6FF;
+    color: #fff;
+    border-color: #91D6FF;
+}
+
+.sidebar a.active {
+    background-color: #91D6FF;
+    color: #fff;
+    border-color: #91D6FF;
+}

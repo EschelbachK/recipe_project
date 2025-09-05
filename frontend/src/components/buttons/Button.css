@@ -1,0 +1,29 @@
+.action-btn {
+    background: #91D6FF;
+    color: #312e32;
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 1.0rem;
+    min-width: 60px;
+    transition: background 0.2s ease;
+}
+
+.action-btn:hover {
+    background: #6ec7fa;
+}
+
+.action-btn.fav {
+    background: #FF7F7F;
+    color: white;
+}
+
+.action-btn.fav:hover {
+    background: #e06666;
+}

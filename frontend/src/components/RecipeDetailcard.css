@@ -1,0 +1,75 @@
+.detail-card {
+    background: white;
+    color: black;
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 800px;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border: 1px solid #ddd;
+}
+
+.detail-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.detail-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-section-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.detail-plain {
+    font-size: 1rem;
+    padding-left: 0.1rem;
+}
+
+.ingredients-box {
+    background: var(--color-bg-dark);
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    border-radius: var(--radius);
+}
+
+.ingredients-box ul {
+    padding-left: 1.2rem;
+    line-height: 1.6;
+}
+
+.description-box {
+    background-color: var(--color-bg-dark);
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    border-radius: var(--radius);
+    white-space: pre-wrap;
+}
+
+.divider {
+    height: 1px;
+    background-color: #ccc;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+p {
+    font-size: 1rem;
+    line-height: 1.5;
+}

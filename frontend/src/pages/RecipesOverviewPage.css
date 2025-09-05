@@ -1,0 +1,21 @@
+.overview-page {
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.overview-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.loading {
+    color: var(--color-text);
+}
+
+.error {
+    color: var(--color-danger);
+    font-weight: bold;
+}

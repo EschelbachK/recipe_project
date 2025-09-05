@@ -1,0 +1,38 @@
+.detail-page {
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-lg);
+}
+
+.loading {
+    color: var(--color-text);
+    text-align: center;
+}
+
+.error-box {
+    background: #ffecec;
+    border: 1px solid var(--color-danger);
+    padding: var(--spacing-md);
+    border-radius: var(--radius);
+    color: var(--color-danger);
+    text-align: center;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

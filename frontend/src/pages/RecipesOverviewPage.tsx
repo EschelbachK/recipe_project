@@ -1,9 +1,10 @@
 import axios from "axios"
-import {useEffect, useState} from "react"
-import {useNavigate} from "react-router-dom"
-import type {Recipe} from "../types/types"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import type { Recipe } from "../types/types"
 import RecipeGallery from "../components/RecipeGallery"
-import {routerConfig} from "../router/routerConfig"
+import { routerConfig } from "../router/routerConfig"
+import "./RecipesOverviewPage.css"
 
 export default function RecipesOverviewPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -15,7 +16,7 @@ export default function RecipesOverviewPage() {
         setLoading(true)
         setError(null)
         try {
-            const response = await axios.get<Recipe[]>(routerConfig.API.RECIPES, {withCredentials: true})
+            const response = await axios.get<Recipe[]>(routerConfig.API.RECIPES, { withCredentials: true })
             setRecipes(response.data)
         } catch {
             setError("Fehler beim Laden der Rezepte!")
@@ -32,7 +33,7 @@ export default function RecipesOverviewPage() {
         const confirmed = confirm("Rezept wirklich löschen?")
         if (!confirmed) return
         try {
-            await axios.delete(routerConfig.API.RECIPE_ID(id), {withCredentials: true})
+            await axios.delete(routerConfig.API.RECIPE_ID(id), { withCredentials: true })
             void loadRecipes()
         } catch {
             alert("Rezept konnte nicht gelöscht werden.")
@@ -51,13 +52,14 @@ export default function RecipesOverviewPage() {
         alert("Einkaufsliste ist bald verfügbar!")
     }
 
-    if (loading) return <p>Lade Rezepte...</p>
-    if (error) return <p>{error}</p>
+    if (loading) return <p className="loading">Lade Rezepte...</p>
+    if (error) return <p className="error">{error}</p>
 
     return (
-        <div>
-            <h2>Meine Rezepte</h2>
-            <button onClick={() => navigate(routerConfig.URL.RECIPE_NEW)}>Neues Rezept hinzufügen</button>
+        <div className="overview-page">
+            <div className="overview-header">
+                <h2>Meine Rezepte</h2>
+            </div>
             <RecipeGallery
                 recipes={recipes}
                 onDelete={deleteRecipe}
