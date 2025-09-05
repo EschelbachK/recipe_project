@@ -1,12 +1,13 @@
 import axios from "axios"
-import {useEffect, useState} from "react"
-import {useNavigate, useParams} from "react-router-dom"
-import type {Recipe} from "../types/types"
-import {routerConfig} from "../router/routerConfig"
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import type { Recipe } from "../types/types"
+import { routerConfig } from "../router/routerConfig"
 import RecipeDetailCard from "../components/RecipeDetailCard"
+import "./RecipeDetailPage.css"
 
 export default function RecipeDetailPage() {
-    const {id} = useParams<{ id: string }>()
+    const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
 
     const [recipe, setRecipe] = useState<Recipe | null>(null)
@@ -18,7 +19,7 @@ export default function RecipeDetailPage() {
         setLoading(true)
         setError(null)
         try {
-            const res = await axios.get<Recipe>(routerConfig.API.RECIPE_ID(id), {withCredentials: true})
+            const res = await axios.get<Recipe>(routerConfig.API.RECIPE_ID(id), { withCredentials: true })
             setRecipe(res.data)
         } catch (e: any) {
             const s = e?.response?.status
@@ -38,7 +39,7 @@ export default function RecipeDetailPage() {
         if (!recipe) return
         if (!confirm("Rezept löschen?")) return
         try {
-            await axios.delete(routerConfig.API.RECIPE_ID(recipe.id), {withCredentials: true})
+            await axios.delete(routerConfig.API.RECIPE_ID(recipe.id), { withCredentials: true })
             navigate(routerConfig.URL.RECIPES)
         } catch {
             alert("Löschen fehlgeschlagen.")
@@ -58,22 +59,26 @@ export default function RecipeDetailPage() {
         alert("Einkaufsliste ist bald verfügbar!")
     }
 
-    if (loading) return <p>Lade...</p>
-    if (error) return (
-        <div>
-            <p>{error}</p>
-            <button onClick={() => navigate(routerConfig.URL.RECIPES)}>Zur Übersicht</button>
-        </div>
-    )
+    if (loading) return <p className="loading">Lade...</p>
+    if (error) {
+        return (
+            <div className="error-box">
+                <p>{error}</p>
+                <button onClick={() => navigate(routerConfig.URL.RECIPES)}>Zur Übersicht</button>
+            </div>
+        )
+    }
     if (!recipe) return <p>Kein Rezept.</p>
 
     return (
-        <RecipeDetailCard
-            recipe={recipe}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onFavorite={handleFavorite}
-            onAddToShopping={handleAddToShopping}
-        />
+        <div className="detail-page">
+            <RecipeDetailCard
+                recipe={recipe}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onFavorite={handleFavorite}
+                onAddToShopping={handleAddToShopping}
+            />
+        </div>
     )
 }
