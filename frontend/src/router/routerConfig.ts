@@ -21,6 +21,8 @@ type API = {
     RECIPE_ID: (id: string) => string
     CREATE_RECIPE: string
     UPDATE_RECIPE: (id: string) => string
+    FAVORITES: string
+    FAVORITES_TOGGLE: (id: string) => string
     AUTH_USER: string
     GITHUB_AUTH: string
 }
@@ -43,6 +45,8 @@ export const routerConfig: RouterConfig = {
         RECIPE_ID: (id: string) => `/api/recipes/${id}`,
         CREATE_RECIPE: "/api/recipes",
         UPDATE_RECIPE: (id: string) => `/api/recipes/${id}`,
+        FAVORITES: "/api/favorites/recipes",
+        FAVORITES_TOGGLE: (id: string) => `/api/favorites/${id}/toggle`,
         AUTH_USER: "/api/auth/me",
         GITHUB_AUTH: "/oauth2/authorization/github"
     }
