@@ -9,6 +9,7 @@ import "./RecipeCard.css"
 
 type Props = {
     recipe: Recipe
+    isFav: boolean
     onFavorite: () => void
     onEdit: () => void
     onDelete: () => void
@@ -17,6 +18,7 @@ type Props = {
 
 export default function RecipeCard({
                                        recipe,
+                                       isFav,
                                        onFavorite,
                                        onEdit,
                                        onDelete,
@@ -35,7 +37,7 @@ export default function RecipeCard({
                 </div>
             </a>
             <div className="card-actions">
-                <FavButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFavorite() }} />
+                <FavButton isFav={isFav} onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFavorite() }} />
                 <EditButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit() }} />
                 <DeleteButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete() }} />
                 <ShoppingButton onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAddToShopping() }} />

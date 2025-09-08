@@ -1,17 +1,18 @@
-import * as React from "react";
+import * as React from "react"
 import "./Button.css"
 
 type Props = {
-    onClick: (e: React.MouseEvent) => void;
-};
+    isFav: boolean
+    onClick: (e: React.MouseEvent) => void
+}
 
-export default function FavButton({onClick}: Readonly<Props>) {
+export default function FavButton({ isFav, onClick }: Readonly<Props>) {
     return (
         <button
-            className="action-btn fav"
+            className={`action-btn fav ${isFav ? "active" : ""}`}
             onClick={onClick}
         >
-            Fav❤️
+            <span>♥</span>
         </button>
-    );
+    )
 }

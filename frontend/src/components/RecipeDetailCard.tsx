@@ -8,6 +8,7 @@ import "./RecipeDetailCard.css"
 
 type Props = {
     recipe: Recipe
+    isFav: boolean
     onEdit: () => void
     onDelete: () => void
     onFavorite: () => void
@@ -16,6 +17,7 @@ type Props = {
 
 export default function RecipeDetailCard({
                                              recipe,
+                                             isFav,
                                              onEdit,
                                              onDelete,
                                              onFavorite,
@@ -62,7 +64,7 @@ export default function RecipeDetailCard({
             <div className="divider" />
 
             <div className="button-row">
-                <FavButton onClick={onFavorite} />
+                <FavButton isFav={isFav} onClick={onFavorite} />
                 <EditButton onClick={onEdit} />
                 <DeleteButton onClick={onDelete} />
                 <ShoppingButton onClick={onAddToShopping} />
