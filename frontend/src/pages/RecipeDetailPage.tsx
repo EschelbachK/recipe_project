@@ -11,6 +11,7 @@ export default function RecipeDetailPage() {
     const navigate = useNavigate()
 
     const [recipe, setRecipe] = useState<Recipe | null>(null)
+    const [isFav, setIsFav] = useState(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -21,6 +22,9 @@ export default function RecipeDetailPage() {
         try {
             const res = await axios.get<Recipe>(routerConfig.API.RECIPE_ID(id), { withCredentials: true })
             setRecipe(res.data)
+
+            const favRes = await axios.get<Recipe[]>(routerConfig.API.FAVORITES, { withCredentials: true })
+            setIsFav(favRes.data.some(r => r.id === id))
         } catch (e: any) {
             const s = e?.response?.status
             if (s === 401) setError("Nicht eingeloggt.")
@@ -51,8 +55,17 @@ export default function RecipeDetailPage() {
         navigate(routerConfig.URL.RECIPE_EDIT_ID(recipe.id))
     }
 
-    function handleFavorite() {
-        alert("Favoriten sind bald verfügbar!")
+    async function handleFavorite() {
+        if (!recipe) return
+
+        setIsFav(prev => !prev)
+
+        try {
+            await axios.post(routerConfig.API.FAVORITES_TOGGLE(recipe.id), {}, { withCredentials: true })
+        } catch {
+            alert("Favorit konnte nicht geändert werden.")
+            await loadRecipe()
+        }
     }
 
     function handleAddToShopping() {
@@ -74,6 +87,7 @@ export default function RecipeDetailPage() {
         <div className="detail-page">
             <RecipeDetailCard
                 recipe={recipe}
+                isFav={isFav}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onFavorite={handleFavorite}
