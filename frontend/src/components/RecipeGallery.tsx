@@ -4,11 +4,12 @@ import AddRecipeCard from "./AddRecipeCard"
 import "./RecipeGallery.css"
 
 type Props = {
-    recipes: Recipe[]
-    onDelete: (id: string) => void
-    onEdit: (id: string) => void
+    recipes: (Recipe & { isFav?: boolean })[]
+    onDelete?: (id: string) => void
+    onEdit?: (id: string) => void
     onFavorite: (id: string) => void
     onAddToShopping: (id: string) => void
+    showAddCard?: boolean
 }
 
 export default function RecipeGallery({
@@ -17,10 +18,11 @@ export default function RecipeGallery({
                                           onEdit,
                                           onFavorite,
                                           onAddToShopping,
+                                          showAddCard = false,
                                       }: Readonly<Props>) {
     return (
         <div className="gallery">
-            <AddRecipeCard />
+            {showAddCard && <AddRecipeCard />}
             {recipes.length === 0 ? (
                 <p>Keine Rezepte vorhanden.</p>
             ) : (
@@ -28,8 +30,9 @@ export default function RecipeGallery({
                     <RecipeCard
                         key={r.id}
                         recipe={r}
-                        onDelete={() => onDelete(r.id)}
-                        onEdit={() => onEdit(r.id)}
+                        isFav={r.isFav ?? false}
+                        onDelete={() => onDelete?.(r.id)}
+                        onEdit={() => onEdit?.(r.id)}
                         onFavorite={() => onFavorite(r.id)}
                         onAddToShopping={() => onAddToShopping(r.id)}
                     />
