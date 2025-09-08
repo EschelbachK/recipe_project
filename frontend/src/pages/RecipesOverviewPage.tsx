@@ -8,6 +8,7 @@ import "./RecipesOverviewPage.css"
 
 export default function RecipesOverviewPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([])
+    const [favoriteIds, setFavoriteIds] = useState<string[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const navigate = useNavigate()
@@ -18,6 +19,9 @@ export default function RecipesOverviewPage() {
         try {
             const response = await axios.get<Recipe[]>(routerConfig.API.RECIPES, { withCredentials: true })
             setRecipes(response.data)
+
+            const favRes = await axios.get<Recipe[]>(routerConfig.API.FAVORITES, { withCredentials: true })
+            setFavoriteIds(favRes.data.map(r => r.id))
         } catch {
             setError("Fehler beim Laden der Rezepte!")
         } finally {
@@ -28,6 +32,20 @@ export default function RecipesOverviewPage() {
     useEffect(() => {
         void loadRecipes()
     }, [])
+
+    async function toggleFavorite(id: string) {
+        // Optimistisches Update
+        setFavoriteIds(prev =>
+            prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
+        )
+
+        try {
+            await axios.post(routerConfig.API.FAVORITES_TOGGLE(id), {}, { withCredentials: true })
+        } catch {
+            alert("Favorit konnte nicht geändert werden.")
+            await loadRecipes()
+        }
+    }
 
     async function deleteRecipe(id: string) {
         const confirmed = confirm("Rezept wirklich löschen?")
@@ -44,10 +62,6 @@ export default function RecipesOverviewPage() {
         navigate(routerConfig.URL.RECIPE_EDIT_ID(id))
     }
 
-    function favoriteRecipe(_id: string) {
-        alert("Favoriten sind bald verfügbar!")
-    }
-
     function addToShopping(_id: string) {
         alert("Einkaufsliste ist bald verfügbar!")
     }
@@ -61,11 +75,15 @@ export default function RecipesOverviewPage() {
                 <h2>Meine Rezepte</h2>
             </div>
             <RecipeGallery
-                recipes={recipes}
+                recipes={recipes.map(r => ({
+                    ...r,
+                    isFav: favoriteIds.includes(r.id),
+                }))}
                 onDelete={deleteRecipe}
                 onEdit={editRecipe}
-                onFavorite={favoriteRecipe}
+                onFavorite={toggleFavorite}
                 onAddToShopping={addToShopping}
+                showAddCard={true}
             />
         </div>
     )
