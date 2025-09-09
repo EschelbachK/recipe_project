@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import type { Recipe } from "../types/types"
 import { routerConfig } from "../router/routerConfig"
@@ -9,6 +10,8 @@ export default function FavoritesPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    const navigate = useNavigate()
 
     async function loadFavorites() {
         setLoading(true)
@@ -38,6 +41,19 @@ export default function FavoritesPage() {
         }
     }
 
+    async function deleteRecipe(id: string) {
+        try {
+            await axios.delete(routerConfig.API.RECIPE_ID(id), { withCredentials: true })
+            await loadFavorites()
+        } catch {
+            alert("Rezept konnte nicht gelöscht werden.")
+        }
+    }
+
+    function editRecipe(id: string) {
+        navigate(routerConfig.URL.RECIPE_EDIT_ID(id))
+    }
+
     function addToShopping(_id: string) {
         alert("Einkaufsliste bald verfügbar!")
     }
@@ -57,6 +73,8 @@ export default function FavoritesPage() {
                 }))}
                 onFavorite={toggleFavorite}
                 onAddToShopping={addToShopping}
+                onEdit={editRecipe}
+                onDelete={deleteRecipe}
             />
         </div>
     )
