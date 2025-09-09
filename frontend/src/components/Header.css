@@ -1,0 +1,60 @@
+.header {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+    background: #91D6FF;
+    color: #312e32;
+    border-bottom: 2px solid #6ec7fa;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+    flex: 1;
+}
+
+.header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.header-center h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.greeting {
+    font-weight: bold;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #312e32;
+    object-fit: cover;
+}
+
+.logout-btn {
+    background: #fa4343;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: #ff4c4c;
+}
