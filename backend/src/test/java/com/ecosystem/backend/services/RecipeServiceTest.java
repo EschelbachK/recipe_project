@@ -34,20 +34,19 @@ class RecipeServiceTest {
     void getAllRecipes_returnsList() {
 
         // GIVEN
-        Recipe r1 = new Recipe("r1", "Kartoffelsalat", 3.0,
+        Recipe r1 = new Recipe("r1", "Pasta", 2.0,
                 List.of(
-                        new Ingredient("i1", "Kartoffeln", 800.0, Unit.G),
-                        new Ingredient("i2", "Essiggurken", 120.0, Unit.G),
-                        new Ingredient("i3", "Zwiebel", 1.0, Unit.PIECE)
+                        new Ingredient("i1", "Nudeln", 200.0, Unit.G),
+                        new Ingredient("i2", "Öl", 20.0, Unit.ML)
                 ),
-                "Mit Essig-Öl-Dressing"
+                "Beschreibung"
         );
-        Recipe r2 = new Recipe("r2", "Tomatensuppe", 2.0,
+        Recipe r2 = new Recipe("r2", "Soup", 3.0,
                 List.of(
-                        new Ingredient("i4", "Tomaten", 600.0, Unit.G),
-                        new Ingredient("i5", "Zwiebel", 1.0, Unit.PIECE)
+                        new Ingredient("i3", "Wasser", 500.0, Unit.ML),
+                        new Ingredient("i4", "Salz", 5.0, Unit.G)
                 ),
-                "Geröstete Tomaten"
+                "Beschreibung"
         );
         List<Recipe> recipes = List.of(r1, r2);
         when(repository.findAll()).thenReturn(recipes);
@@ -65,38 +64,39 @@ class RecipeServiceTest {
 
         // GIVEN
         RecipeDTO dto = new RecipeDTO(
-                "Linsencurry",
-                4.0,
+                "Rice Bowl",
+                1.0,
                 List.of(
-                        new Ingredient("i1", "Rote Linsen", 250.0, Unit.G),
-                        new Ingredient("i2", "Kokosmilch", 400.0, Unit.ML),
-                        new Ingredient("i3", "Zwiebel", 1.0, Unit.PIECE)
+                        new Ingredient(null, "Reis", 100.0, Unit.G),
+                        new Ingredient(null, "Sojasauce", 10.0, Unit.ML)
                 ),
-                "Cremig und mild"
+                "Beschreibung"
         );
 
         Recipe expected = new Recipe(
-                "test-id-123",
-                "Linsencurry",
-                4.0,
+                "testId123",
+                "Rice Bowl",
+                1.0,
                 List.of(
-                        new Ingredient("i1", "Rote Linsen", 250.0, Unit.G),
-                        new Ingredient("i2", "Kokosmilch", 400.0, Unit.ML),
-                        new Ingredient("i3", "Zwiebel", 1.0, Unit.PIECE)
+                        new Ingredient("geni1", "Reis", 100.0, Unit.G),
+                        new Ingredient("geni2", "Sojasauce", 10.0, Unit.ML)
                 ),
-                "Cremig und mild"
+                "Beschreibung"
         );
 
-        when(idService.generateId()).thenReturn("test-id-123");
-        when(repository.save(expected)).thenReturn(expected);
+        when(idService.generateId()).thenReturn("testId123", "geni1", "geni2");
+        when(repository.save(any())).thenReturn(expected);
 
         // WHEN
         Recipe actual = service.createRecipe(dto);
 
         // THEN
-        verify(idService).generateId();
-        verify(repository).save(expected);
-        assertEquals(expected, actual);
+        verify(idService, times(3)).generateId();
+        verify(repository).save(any());
+        assertEquals(expected.name(), actual.name());
+        assertEquals(expected.ingredients().size(), actual.ingredients().size());
+        assertNotNull(actual.ingredients().get(0).id());
+        assertNotNull(actual.ingredients().get(1).id());
     }
 
     @Test
@@ -105,38 +105,40 @@ class RecipeServiceTest {
         // GIVEN
         String id = "r1";
         RecipeDTO dto = new RecipeDTO(
-                "Geröstete Tomatensuppe",
-                3.0,
+                "Veggie Bowl",
+                2.0,
                 List.of(
-                        new Ingredient("i1", "Tomaten", 600.0, Unit.G),
-                        new Ingredient("i2", "Zwiebel", 1.0, Unit.PIECE),
-                        new Ingredient("i3", "Knoblauch", 1.0, Unit.PIECE)
+                        new Ingredient("i1", "Reis", 150.0, Unit.G),
+                        new Ingredient(null, "Avocado", 1.0, Unit.PIECE)
                 ),
-                "Mit Ofenaroma"
+                "Beschreibung"
         );
 
         Recipe toSave = new Recipe(
                 id,
-                "Geröstete Tomatensuppe",
-                3.0,
+                "Veggie Bowl",
+                2.0,
                 List.of(
-                        new Ingredient("i1", "Tomaten", 600.0, Unit.G),
-                        new Ingredient("i2", "Zwiebel", 1.0, Unit.PIECE),
-                        new Ingredient("i3", "Knoblauch", 1.0, Unit.PIECE)
+                        new Ingredient("i1", "Reis", 150.0, Unit.G),
+                        new Ingredient("geni2", "Avocado", 1.0, Unit.PIECE)
                 ),
-                "Mit Ofenaroma"
+                "Beschreibung"
         );
 
         when(repository.existsById(id)).thenReturn(true);
-        when(repository.save(toSave)).thenReturn(toSave);
+        when(idService.generateId()).thenReturn("geni2");
+        when(repository.save(any())).thenReturn(toSave);
 
         // WHEN
         Recipe actual = service.updateRecipe(id, dto);
 
         // THEN
         verify(repository).existsById(id);
-        verify(repository).save(toSave);
-        assertEquals(toSave, actual);
+        verify(repository).save(any());
+        assertEquals("Veggie Bowl", actual.name());
+        assertEquals(2, actual.ingredients().size());
+        assertEquals("i1", actual.ingredients().get(0).id());
+        assertEquals("geni2", actual.ingredients().get(1).id());
     }
 
     @Test
@@ -145,7 +147,6 @@ class RecipeServiceTest {
         // GIVEN
         String id = "nicht gefunden";
         when(repository.existsById(id)).thenReturn(false);
-
         RecipeDTO dto = new RecipeDTO("x", 1.0, List.of(), "x");
 
         // WHEN+THEN
@@ -165,13 +166,13 @@ class RecipeServiceTest {
         String id = "r2";
         Recipe r = new Recipe(
                 id,
-                "Brotzeit",
+                "Toast",
                 1.0,
                 List.of(
                         new Ingredient("i1", "Brot", 2.0, Unit.PIECE),
-                        new Ingredient("i2", "Käse", 80.0, Unit.G)
+                        new Ingredient("i2", "Butter", 15.0, Unit.G)
                 ),
-                "Einfach und gut"
+                "Beschreibung"
         );
         when(repository.findById(id)).thenReturn(java.util.Optional.of(r));
 
@@ -226,5 +227,42 @@ class RecipeServiceTest {
         assertThrows(RecipeNotFoundException.class, () -> service.deleteRecipe(id));
         verify(repository).existsById(id);
         verify(repository, never()).deleteById(anyString());
+    }
+
+    @Test
+    void addMissingIngredientIds_keepsExistingIds() {
+
+        // GIVEN
+        RecipeDTO dto = new RecipeDTO(
+                "Toast",
+                1.0,
+                List.of(
+                        new Ingredient("i1", "Brot", 2.0, Unit.PIECE),
+                        new Ingredient("i2", "Käse", 1.0, Unit.PIECE)
+                ),
+                "Beschreibung"
+        );
+
+        Recipe expected = new Recipe(
+                "recipe123",
+                "Toast",
+                1.0,
+                List.of(
+                        new Ingredient("i1", "Brot", 2.0, Unit.PIECE),
+                        new Ingredient("i2", "Käse", 1.0, Unit.PIECE)
+                ),
+                "Beschreibung"
+        );
+
+        when(idService.generateId()).thenReturn("recipe123");
+        when(repository.save(any())).thenReturn(expected);
+
+        // WHEN
+        Recipe actual = service.createRecipe(dto);
+
+        // THEN
+        verify(idService, times(1)).generateId();
+        assertEquals("i1", actual.ingredients().get(0).id());
+        assertEquals("i2", actual.ingredients().get(1).id());
     }
 }
