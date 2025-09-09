@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import {useEffect, useState} from "react"
 import axios from "axios"
-import type { AppUser } from "./types/types"
-import { Router } from "./router/Router"
+import type {AppUser} from "./types/types"
+import {Router} from "./router/Router"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 import Sidebar from "./components/Sidebar"
@@ -13,7 +13,7 @@ export default function App() {
     useEffect(() => {
         const loadUser = async () => {
             try {
-                const res = await axios.get<AppUser>("/api/auth/me", { withCredentials: true })
+                const res = await axios.get<AppUser>("/api/auth/me", {withCredentials: true})
                 setUser(res.data)
             } catch {
                 setUser(null)
@@ -24,16 +24,14 @@ export default function App() {
 
     return (
         <div className="app-container">
-            {user && <Header user={user} />}
-
+            <Header user={user}/>
             <div className="app-content">
-                <Sidebar />
-                <main style={{ flex: 1, padding: "1rem", overflowY: "auto" }}>
-                    <Router user={user} />
+                {user && <Sidebar/>}
+                <main style={{flex: 1, padding: "1rem", overflowY: "auto"}}>
+                    <Router user={user}/>
                 </main>
             </div>
-
-            <Footer />
+            <Footer/>
         </div>
     )
 }
