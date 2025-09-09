@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { Router } from "./router/Router"
 import type { AppUser } from "./types/types"
+import { Router } from "./router/Router"
+import Header from "./components/Header"
+import Footer from "./components/Footer"
+import Sidebar from "./components/Sidebar"
 import "./App.css"
 
 export default function App() {
@@ -20,13 +23,17 @@ export default function App() {
     }, [])
 
     return (
-        <div className="app">
-            <header className="app-header">
-                <h1>Meine Rezeptübersicht</h1>
-            </header>
-            <main>
-                <Router user={user} />
-            </main>
+        <div className="app-container">
+            {user && <Header user={user} />}
+
+            <div className="app-content">
+                <Sidebar />
+                <main style={{ flex: 1, padding: "1rem", overflowY: "auto" }}>
+                    <Router user={user} />
+                </main>
+            </div>
+
+            <Footer />
         </div>
     )
 }
