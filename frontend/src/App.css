@@ -1,18 +1,21 @@
-.app {
+body {
+    margin: 0;
+    padding: 1rem;
+    background: white;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 2rem);
+    border-radius: 12px;
     background: var(--color-bg-page);
-    min-height: 100vh;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
 }
 
-.app-header {
-    background: var(--color-primary);
-    color: black;
-    padding: 1rem 2rem;
-    font-size: 1rem;
-    font-weight: inherit;
-    text-align: left;
-    box-shadow: var(--shadow);
-}
-
-main {
-    padding: var(--spacing-lg);
+.app-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
 }
