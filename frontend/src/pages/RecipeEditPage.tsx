@@ -1,12 +1,12 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import type { Recipe, Ingredient } from "../types/types"
-import { routerConfig } from "../router/routerConfig"
+import {useEffect, useState} from "react"
+import {useNavigate, useParams} from "react-router-dom"
+import type {Recipe, Ingredient} from "../types/types"
+import {routerConfig} from "../router/routerConfig"
 import "./RecipeEditPage.css"
 
 export default function RecipeEditPage() {
-    const { id } = useParams<{ id: string }>()
+    const {id} = useParams<{ id: string }>()
     const navigate = useNavigate()
     const isNew = !id || id === "new"
 
@@ -19,37 +19,58 @@ export default function RecipeEditPage() {
     })
 
     const [currentIng, setCurrentIng] = useState<Ingredient>({
-        id: Date.now().toString(),
+        id: crypto.randomUUID(),
         name: "",
         amount: 0,
         unit: "G",
     })
 
+    const [editIndex, setEditIndex] = useState<number | null>(null)
+
     useEffect(() => {
         if (!isNew && id) {
             axios
-                .get<Recipe>(routerConfig.API.RECIPE_ID(id), { withCredentials: true })
+                .get<Recipe>(routerConfig.API.RECIPE_ID(id), {withCredentials: true})
                 .then(res => setRecipe(res.data))
-                .catch(() => {})
+                .catch(() => {
+                })
         }
     }, [id, isNew])
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        const { name, value } = e.target
-        setRecipe(prev => ({ ...prev, [name]: name === "servings" ? Number(value) : value }))
+        const {name, value} = e.target
+        if (name === "servings") {
+            const newServings = Number(value)
+            if (newServings < 1) return
+            const factor = newServings / recipe.servings
+            const scaledIngredients = recipe.ingredients.map(i => ({
+                ...i,
+                amount: i.amount * factor,
+            }))
+            setRecipe(prev => ({...prev, servings: newServings, ingredients: scaledIngredients}))
+        } else {
+            setRecipe(prev => ({...prev, [name]: value}))
+        }
     }
 
     function handleIngredient(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-        const { name, value } = e.target
-        setCurrentIng(prev => ({ ...prev, [name]: name === "amount" ? Number(value) : value }))
+        const {name, value} = e.target
+        setCurrentIng(prev => ({...prev, [name]: name === "amount" ? Number(value) : value}))
     }
 
-    function addIngredient() {
-        setRecipe(prev => ({
-            ...prev,
-            ingredients: [...prev.ingredients, { ...currentIng, id: Date.now().toString() }],
-        }))
-        setCurrentIng({ id: Date.now().toString(), name: "", amount: 0, unit: "G" })
+    function addOrUpdateIngredient() {
+        if (editIndex !== null) {
+            const updatedIngredients = [...recipe.ingredients]
+            updatedIngredients[editIndex] = {...currentIng}
+            setRecipe(prev => ({...prev, ingredients: updatedIngredients}))
+            setEditIndex(null)
+        } else {
+            setRecipe(prev => ({
+                ...prev,
+                ingredients: [...prev.ingredients, {...currentIng, id: crypto.randomUUID()}],
+            }))
+        }
+        setCurrentIng({id: crypto.randomUUID(), name: "", amount: 0, unit: "G"})
     }
 
     function removeIngredient(id: string) {
@@ -57,6 +78,11 @@ export default function RecipeEditPage() {
             ...prev,
             ingredients: prev.ingredients.filter(i => i.id !== id),
         }))
+    }
+
+    function editIngredient(index: number) {
+        setCurrentIng(recipe.ingredients[index])
+        setEditIndex(index)
     }
 
     async function handleSubmit(e: React.FormEvent) {
@@ -69,9 +95,9 @@ export default function RecipeEditPage() {
         }
 
         if (isNew) {
-            await axios.post(routerConfig.API.CREATE_RECIPE, dto, { withCredentials: true })
+            await axios.post(routerConfig.API.CREATE_RECIPE, dto, {withCredentials: true})
         } else if (id) {
-            await axios.put(routerConfig.API.UPDATE_RECIPE(id), dto, { withCredentials: true })
+            await axios.put(routerConfig.API.UPDATE_RECIPE(id), dto, {withCredentials: true})
         }
 
         navigate(routerConfig.URL.RECIPES)
@@ -87,11 +113,19 @@ export default function RecipeEditPage() {
                         <div className="form-row-inline">
                             <div className="input-group wide">
                                 <label htmlFor="name">Rezeptname:</label>
-                                <input id="name" name="name" value={recipe.name} onChange={handleChange} required />
+                                <input id="name" name="name" value={recipe.name} onChange={handleChange} required/>
                             </div>
                             <div className="input-group narrow">
                                 <label htmlFor="servings">Portionen:</label>
-                                <input id="servings" type="number" name="servings" value={recipe.servings} min={1} onChange={handleChange} required />
+                                <input
+                                    id="servings"
+                                    type="number"
+                                    name="servings"
+                                    value={recipe.servings}
+                                    min={1}
+                                    onChange={handleChange}
+                                    required
+                                />
                             </div>
                         </div>
 
@@ -129,24 +163,39 @@ export default function RecipeEditPage() {
                                         <option>L</option>
                                         <option>PIECE</option>
                                     </select>
-                                    <button type="button" onClick={addIngredient}>+</button>
+                                    <button type="button" onClick={addOrUpdateIngredient}>
+                                        {editIndex !== null ? "✔" : "+"}
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
                         <div className="form-row">
                             <h3 className="section-title">Zutatenliste:</h3>
-                            {recipe.ingredients.map(ing => (
+                            {recipe.ingredients.map((ing, index) => (
                                 <div key={ing.id} className="ingredient">
                                     <span>{ing.name} {ing.amount} {ing.unit}</span>
-                                    <button type="button" className="remove-btn" onClick={() => removeIngredient(ing.id)}>x</button>
+                                    <div className="ingredient-actions">
+                                        <button type="button" className="edit-btn"
+                                                onClick={() => editIngredient(index)}>✏️
+                                        </button>
+                                        <button type="button" className="remove-btn"
+                                                onClick={() => removeIngredient(ing.id)}>x
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
 
                         <div className="form-row">
                             <h3 className="section-title">Rezeptbeschreibung:</h3>
-                            <textarea id="description" name="description" value={recipe.description} onChange={handleChange} required />
+                            <textarea
+                                id="description"
+                                name="description"
+                                value={recipe.description}
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
 
                         <div className="form-actions">

@@ -2,6 +2,7 @@ package com.ecosystem.backend.services;
 
 import com.ecosystem.backend.dto.RecipeDTO;
 import com.ecosystem.backend.exception.RecipeNotFoundException;
+import com.ecosystem.backend.models.Ingredient;
 import com.ecosystem.backend.models.Recipe;
 import com.ecosystem.backend.repository.RecipeRepository;
 import org.springframework.stereotype.Service;
@@ -30,25 +31,25 @@ public class RecipeService {
 
     public Recipe createRecipe(RecipeDTO dto) {
 
-        Recipe recipe = new Recipe(
+        return repository.save(new Recipe(
                 idService.generateId(),
                 dto.name(),
                 dto.servings(),
-                dto.ingredients(),
+                addMissingIngredientIds(dto.ingredients()),
                 dto.description()
-        );
-        return repository.save(recipe);
+        ));
     }
 
     public Recipe updateRecipe(String id, RecipeDTO dto) {
         if (!repository.existsById(id)) {
             throw new RecipeNotFoundException("Recipe not found with id " + id);
         }
+
         return repository.save(new Recipe(
                 id,
                 dto.name(),
                 dto.servings(),
-                dto.ingredients(),
+                addMissingIngredientIds(dto.ingredients()),
                 dto.description()
         ));
     }
@@ -58,5 +59,14 @@ public class RecipeService {
             throw new RecipeNotFoundException("Recipe not found with id " + id);
         }
         repository.deleteById(id);
+    }
+
+    private List<Ingredient> addMissingIngredientIds(List<Ingredient> ingredients) {
+        return ingredients.stream()
+                .map(ing -> (ing.id() == null || ing.id().isBlank())
+                        ? new Ingredient(idService.generateId(), ing.name(), ing.amount(), ing.unit())
+                        : ing
+                )
+                .toList();
     }
 }

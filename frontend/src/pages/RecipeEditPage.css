@@ -91,15 +91,7 @@
     width: 70px;
 }
 
-textarea {
-    background: var(--color-bg-dark);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: var(--spacing-sm);
-    min-height: 160px;
-    font-size: 0.95rem;
-}
-
+textarea,
 input,
 select {
     background: var(--color-bg-dark);
@@ -109,28 +101,56 @@ select {
     font-size: 0.95rem;
 }
 
+textarea {
+    min-height: 160px;
+}
+
 .ingredient {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: var(--color-bg-dark);
+    border-radius: var(--radius);
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 0.6rem;
+    box-shadow: var(--shadow);
+    font-size: 0.95rem;
+}
+
+.ingredient span {
+    flex: 1;
+}
+
+.ingredient-actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.edit-btn {
+    background: #91D6FF;
+    border: none;
     padding: 0.3rem 0.6rem;
     border-radius: var(--radius);
-    font-size: 0.95rem;
-    min-height: 36px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.edit-btn:hover {
+    background: #6ec7fa;
 }
 
 .remove-btn {
     background: #ff6666;
     color: white;
     border: none;
-    padding: 0.2rem 0.6rem;
+    padding: 0.3rem 0.6rem;
     border-radius: var(--radius);
     cursor: pointer;
     font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+
+.remove-btn:hover {
+    background: #e05555;
 }
 
 .section-title {
