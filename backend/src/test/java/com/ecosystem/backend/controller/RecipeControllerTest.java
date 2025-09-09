@@ -39,7 +39,7 @@ class RecipeControllerTest {
     @Test
     void getAllRecipes_initiallyEmpty() throws Exception {
 
-        // WHEN + THEN
+        // WHEN+THEN
         mockMvc.perform(get("/api/recipes"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"))
@@ -55,9 +55,9 @@ class RecipeControllerTest {
                   "name": "Kartoffelsalat",
                   "servings": 3,
                   "ingredients": [
-                    {"id": "i1", "name": "Kartoffeln", "amount": 800.0, "unit": "G"},
-                    {"id": "i2", "name": "Essiggurken", "amount": 120.0, "unit": "G"},
-                    {"id": "i3", "name": "Zwiebel", "amount": 1.0, "unit": "PIECE"}
+                    {"name": "Kartoffeln", "amount": 800.0, "unit": "G"},
+                    {"name": "Essiggurken", "amount": 120.0, "unit": "G"},
+                    {"name": "Zwiebel", "amount": 1.0, "unit": "PIECE"}
                   ],
                   "description": "Klassischer Kartoffelsalat mit Essig-Öl-Dressing"
                 }
@@ -73,8 +73,11 @@ class RecipeControllerTest {
                 .andExpect(jsonPath("$.name").value("Kartoffelsalat"))
                 .andExpect(jsonPath("$.servings").value(3.0))
                 .andExpect(jsonPath("$.ingredients.length()").value(3))
+                .andExpect(jsonPath("$.ingredients[0].id").isNotEmpty())
                 .andExpect(jsonPath("$.ingredients[0].name").value("Kartoffeln"))
+                .andExpect(jsonPath("$.ingredients[1].id").isNotEmpty())
                 .andExpect(jsonPath("$.ingredients[1].name").value("Essiggurken"))
+                .andExpect(jsonPath("$.ingredients[2].id").isNotEmpty())
                 .andExpect(jsonPath("$.ingredients[2].name").value("Zwiebel"))
                 .andExpect(jsonPath("$.description").value("Klassischer Kartoffelsalat mit Essig-Öl-Dressing"));
     }
@@ -102,13 +105,12 @@ class RecipeControllerTest {
                   "ingredients": [
                     {"id": "i1", "name": "Tomaten", "amount": 600.0, "unit": "G"},
                     {"id": "i2", "name": "Zwiebel", "amount": 1.0, "unit": "PIECE"},
-                    {"id": "i3", "name": "Knoblauch", "amount": 1.0, "unit": "PIECE"}
+                    {"name": "Knoblauch", "amount": 1.0, "unit": "PIECE"}
                   ],
                   "description": "Tomatensuppe mit Ofenaroma"
                 }
                 """;
 
-        // WHEN+THEN
         mockMvc.perform(put("/api/recipes/r1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateJson))
@@ -118,8 +120,11 @@ class RecipeControllerTest {
                 .andExpect(jsonPath("$.name").value("Geröstete Tomatensuppe"))
                 .andExpect(jsonPath("$.servings").value(3.0))
                 .andExpect(jsonPath("$.ingredients.length()").value(3))
+                .andExpect(jsonPath("$.ingredients[0].id").value("i1"))
                 .andExpect(jsonPath("$.ingredients[0].name").value("Tomaten"))
+                .andExpect(jsonPath("$.ingredients[1].id").value("i2"))
                 .andExpect(jsonPath("$.ingredients[1].name").value("Zwiebel"))
+                .andExpect(jsonPath("$.ingredients[2].id").isNotEmpty())
                 .andExpect(jsonPath("$.ingredients[2].name").value("Knoblauch"))
                 .andExpect(jsonPath("$.description").value("Tomatensuppe mit Ofenaroma"));
     }
@@ -149,8 +154,11 @@ class RecipeControllerTest {
                 .andExpect(jsonPath("$.name").value("Linsencurry"))
                 .andExpect(jsonPath("$.servings").value(4.0))
                 .andExpect(jsonPath("$.ingredients.length()").value(3))
+                .andExpect(jsonPath("$.ingredients[0].id").value("i1"))
                 .andExpect(jsonPath("$.ingredients[0].name").value("Rote Linsen"))
+                .andExpect(jsonPath("$.ingredients[1].id").value("i2"))
                 .andExpect(jsonPath("$.ingredients[1].name").value("Kokosmilch"))
+                .andExpect(jsonPath("$.ingredients[2].id").value("i3"))
                 .andExpect(jsonPath("$.ingredients[2].name").value("Zwiebel"))
                 .andExpect(jsonPath("$.description").value("Cremiges Curry"));
     }
