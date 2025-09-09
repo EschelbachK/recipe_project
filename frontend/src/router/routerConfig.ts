@@ -25,6 +25,7 @@ type API = {
     FAVORITES_TOGGLE: (id: string) => string
     AUTH_USER: string
     GITHUB_AUTH: string
+    LOGOUT: string
 }
 
 export const routerConfig: RouterConfig = {
@@ -48,6 +49,7 @@ export const routerConfig: RouterConfig = {
         FAVORITES: "/api/favorites/recipes",
         FAVORITES_TOGGLE: (id: string) => `/api/favorites/${id}/toggle`,
         AUTH_USER: "/api/auth/me",
-        GITHUB_AUTH: "/oauth2/authorization/github"
+        GITHUB_AUTH: "/oauth2/authorization/github",
+        LOGOUT: "/logout"
     }
 }
