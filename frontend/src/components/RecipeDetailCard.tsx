@@ -1,9 +1,12 @@
+import { useState } from "react"
+import axios from "axios"
 import type { Recipe } from "../types/types"
 import RecipeCover from "./RecipeCover"
 import FavButton from "./buttons/FavButton"
 import EditButton from "./buttons/EditButton"
 import DeleteButton from "./buttons/DeleteButton"
 import ShoppingButton from "./buttons/ShoppingButton"
+import { routerConfig } from "../router/routerConfig"
 import "./RecipeDetailCard.css"
 
 type Props = {
@@ -23,22 +26,50 @@ export default function RecipeDetailCard({
                                              onFavorite,
                                              onAddToShopping,
                                          }: Readonly<Props>) {
+    const [localRecipe, setLocalRecipe] = useState<Recipe>(recipe)
+
+    async function scaleServings(newServings: number) {
+        if (newServings < 1) return
+        const factor = newServings / localRecipe.servings
+        const scaledIngredients = localRecipe.ingredients.map(i => ({
+            ...i,
+            amount: i.amount * factor,
+        }))
+        const updated = { ...localRecipe, servings: newServings, ingredients: scaledIngredients }
+        setLocalRecipe(updated)
+        await axios.put(routerConfig.API.UPDATE_RECIPE(updated.id), updated, { withCredentials: true })
+    }
+
     return (
         <div className="detail-card">
-            <RecipeCover name={recipe.name} />
-            <h2 className="detail-title">{recipe.name}</h2>
+            <RecipeCover name={localRecipe.name} />
+            <h2 className="detail-title">{localRecipe.name}</h2>
 
-            <div className="detail-section">
+            <div className="detail-section servings-control">
                 <span className="detail-section-title">Portionen:</span>
-                <span className="detail-plain">{recipe.servings}</span>
+                <div className="servings-box">
+                    <button
+                        className="servings-btn"
+                        onClick={() => scaleServings(localRecipe.servings - 1)}
+                    >
+                        –
+                    </button>
+                    <span className="servings-value">{localRecipe.servings}</span>
+                    <button
+                        className="servings-btn"
+                        onClick={() => scaleServings(localRecipe.servings + 1)}
+                    >
+                        +
+                    </button>
+                </div>
             </div>
 
             <div className="detail-section">
                 <h3 className="detail-section-title">Zutaten:</h3>
                 <div className="ingredients-box">
-                    {recipe.ingredients.length > 0 ? (
+                    {localRecipe.ingredients.length > 0 ? (
                         <ul>
-                            {recipe.ingredients.map(i => (
+                            {localRecipe.ingredients.map(i => (
                                 <li key={i.id}>
                                     {i.name} — {i.amount} {i.unit}
                                 </li>
@@ -53,8 +84,8 @@ export default function RecipeDetailCard({
             <div className="detail-section">
                 <h3 className="detail-section-title">Zubereitung:</h3>
                 <div className="description-box">
-                    {recipe.description ? (
-                        <p>{recipe.description}</p>
+                    {localRecipe.description ? (
+                        <p>{localRecipe.description}</p>
                     ) : (
                         <p>Keine Beschreibung vorhanden.</p>
                     )}
