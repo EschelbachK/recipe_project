@@ -1,17 +1,16 @@
-import * as React from "react";
-import "./Button.css"
+type ShoppingButtonProps = {
+    isActive?: boolean
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+}
 
-type Props = {
-    onClick: (e: React.MouseEvent) => void;
-};
-
-export default function ShoppingButton({onClick}: Readonly<Props>) {
+export default function ShoppingButton({isActive = false, onClick}: Readonly<ShoppingButtonProps>) {
     return (
         <button
-            className="action-btn"
+            type="button"
+            className={`action-btn shopping ${isActive ? "active" : ""}`}
             onClick={onClick}
         >
-            EL 🛒
+            {isActive ? "✔" : "🛒"}
         </button>
-    );
+    )
 }
