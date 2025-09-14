@@ -1,17 +1,18 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import type { Recipe } from "../types/types"
-import { routerConfig } from "../router/routerConfig"
+import {useEffect, useState} from "react"
+import {useNavigate, useParams} from "react-router-dom"
+import type {Recipe, ShoppingListItem} from "../types/types"
+import {routerConfig} from "../router/routerConfig"
 import RecipeDetailCard from "../components/RecipeDetailCard"
 import "./RecipeDetailPage.css"
 
 export default function RecipeDetailPage() {
-    const { id } = useParams<{ id: string }>()
+    const {id} = useParams<{ id: string }>()
     const navigate = useNavigate()
 
     const [recipe, setRecipe] = useState<Recipe | null>(null)
     const [isFav, setIsFav] = useState(false)
+    const [inShopping, setInShopping] = useState(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -20,11 +21,14 @@ export default function RecipeDetailPage() {
         setLoading(true)
         setError(null)
         try {
-            const res = await axios.get<Recipe>(routerConfig.API.RECIPE_ID(id), { withCredentials: true })
+            const res = await axios.get<Recipe>(routerConfig.API.RECIPE_ID(id), {withCredentials: true})
             setRecipe(res.data)
 
-            const favRes = await axios.get<Recipe[]>(routerConfig.API.FAVORITES, { withCredentials: true })
+            const favRes = await axios.get<Recipe[]>(routerConfig.API.FAVORITES, {withCredentials: true})
             setIsFav(favRes.data.some(r => r.id === id))
+
+            const shoppingRes = await axios.get<ShoppingListItem[]>(routerConfig.API.SHOPPING_LIST, {withCredentials: true})
+            setInShopping(shoppingRes.data.some(r => r.recipeId === id))
         } catch (e: any) {
             const s = e?.response?.status
             if (s === 401) setError("Nicht eingeloggt.")
@@ -43,7 +47,7 @@ export default function RecipeDetailPage() {
         if (!recipe) return
         if (!confirm("Rezept löschen?")) return
         try {
-            await axios.delete(routerConfig.API.RECIPE_ID(recipe.id), { withCredentials: true })
+            await axios.delete(routerConfig.API.RECIPE_ID(recipe.id), {withCredentials: true})
             navigate(routerConfig.URL.RECIPES)
         } catch {
             alert("Löschen fehlgeschlagen.")
@@ -61,7 +65,7 @@ export default function RecipeDetailPage() {
         setIsFav(prev => !prev)
 
         try {
-            await axios.post(routerConfig.API.FAVORITES_TOGGLE(recipe.id), {}, { withCredentials: true })
+            await axios.post(routerConfig.API.FAVORITES_TOGGLE(recipe.id), {}, {withCredentials: true})
         } catch {
             alert("Favorit konnte nicht geändert werden.")
             await loadRecipe()
@@ -88,6 +92,7 @@ export default function RecipeDetailPage() {
             <RecipeDetailCard
                 recipe={recipe}
                 isFav={isFav}
+                inShopping={inShopping}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onFavorite={handleFavorite}
