@@ -1,26 +1,28 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import {useEffect, useState} from "react"
+import {useNavigate} from "react-router-dom"
 import axios from "axios"
-import type { Recipe } from "../types/types"
-import { routerConfig } from "../router/routerConfig"
+import type {Recipe, ShoppingListItem} from "../types/types"
+import {routerConfig} from "../router/routerConfig"
 import RecipeGallery from "../components/RecipeGallery"
-import "./RecipesOverviewPage.css"
+import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
 
 export default function FavoritesPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([])
+    const [shoppingIds, setShoppingIds] = useState<string[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-
     const navigate = useNavigate()
 
     async function loadFavorites() {
         setLoading(true)
         setError(null)
         try {
-            const res = await axios.get<Recipe[]>(routerConfig.API.FAVORITES, {
-                withCredentials: true,
-            })
-            setRecipes(res.data)
+            const [favRes, shoppingRes] = await Promise.all([
+                axios.get<Recipe[]>(routerConfig.API.FAVORITES, {withCredentials: true}),
+                axios.get<ShoppingListItem[]>(routerConfig.API.SHOPPING_LIST, {withCredentials: true})
+            ])
+            setRecipes(favRes.data)
+            setShoppingIds(shoppingRes.data.map(r => r.recipeId))
         } catch {
             setError("Fehler beim Laden der Favoriten!")
         } finally {
@@ -32,21 +34,30 @@ export default function FavoritesPage() {
         void loadFavorites()
     }, [])
 
-    async function toggleFavorite(id: string) {
-        try {
-            await axios.post(routerConfig.API.FAVORITES_TOGGLE(id), {}, { withCredentials: true })
-            await loadFavorites()
-        } catch {
-            alert("Favorit konnte nicht geändert werden.")
+    async function toggleShopping(recipe: Recipe) {
+        if (shoppingIds.includes(recipe.id)) {
+            setShoppingIds(prev => prev.filter(s => s !== recipe.id))
+            try {
+                await removeFromShoppingList(recipe.id)
+            } catch {
+                await loadFavorites()
+            }
+        } else {
+            setShoppingIds(prev => [...prev, recipe.id])
+            try {
+                await addToShoppingList(recipe)
+            } catch {
+                await loadFavorites()
+            }
         }
     }
 
-    async function deleteRecipe(id: string) {
+    async function toggleFavorite(id: string) {
+        setRecipes(prev => prev.filter(r => r.id !== id))
         try {
-            await axios.delete(routerConfig.API.RECIPE_ID(id), { withCredentials: true })
-            await loadFavorites()
+            await axios.post(routerConfig.API.FAVORITES_TOGGLE(id), {}, {withCredentials: true})
         } catch {
-            alert("Rezept konnte nicht gelöscht werden.")
+            await loadFavorites()
         }
     }
 
@@ -54,28 +65,29 @@ export default function FavoritesPage() {
         navigate(routerConfig.URL.RECIPE_EDIT_ID(id))
     }
 
-    function addToShopping(_id: string) {
-        alert("Einkaufsliste bald verfügbar!")
-    }
-
-    if (loading) return <p>Lade Favoriten...</p>
-    if (error) return <p>{error}</p>
-
     return (
         <div className="overview-page">
             <div className="overview-header">
                 <h2>Meine Favoriten</h2>
             </div>
-            <RecipeGallery
-                recipes={recipes.map(r => ({
-                    ...r,
-                    isFav: true,
-                }))}
-                onFavorite={toggleFavorite}
-                onAddToShopping={addToShopping}
-                onEdit={editRecipe}
-                onDelete={deleteRecipe}
-            />
+            {loading && <p className="loading">Lade Favoriten...</p>}
+            {error && <p className="error">{error}</p>}
+            {!loading && !error && (
+                <RecipeGallery
+                    recipes={recipes.map(r => ({
+                        ...r,
+                        isFav: true,
+                        inShopping: shoppingIds.includes(r.id),
+                    }))}
+                    onFavorite={toggleFavorite}
+                    onAddToShopping={(id) => {
+                        const recipe = recipes.find(r => r.id === id)
+                        if (recipe) void toggleShopping(recipe)
+                    }}
+                    onEdit={editRecipe}
+                    onDelete={() => {}}
+                />
+            )}
         </div>
     )
 }
