@@ -11,7 +11,7 @@ export default function DeleteButton({onClick}: Readonly<Props>) {
             className="action-btn"
             onClick={onClick}
         >
-            Del 🗑️
+            🗑️
         </button>
     );
 }
