@@ -1,17 +1,19 @@
-import { useState } from "react"
+import {useState} from "react"
 import axios from "axios"
-import type { Recipe } from "../types/types"
+import type {Recipe} from "../types/types"
 import RecipeCover from "./RecipeCover"
 import FavButton from "./buttons/FavButton"
 import EditButton from "./buttons/EditButton"
 import DeleteButton from "./buttons/DeleteButton"
 import ShoppingButton from "./buttons/ShoppingButton"
-import { routerConfig } from "../router/routerConfig"
+import {routerConfig} from "../router/routerConfig"
+import {addToShoppingList} from "../services/shoppingService"
 import "./RecipeDetailCard.css"
 
 type Props = {
     recipe: Recipe
     isFav: boolean
+    inShopping: boolean
     onEdit: () => void
     onDelete: () => void
     onFavorite: () => void
@@ -21,6 +23,7 @@ type Props = {
 export default function RecipeDetailCard({
                                              recipe,
                                              isFav,
+                                             inShopping,
                                              onEdit,
                                              onDelete,
                                              onFavorite,
@@ -35,32 +38,26 @@ export default function RecipeDetailCard({
             ...i,
             amount: i.amount * factor,
         }))
-        const updated = { ...localRecipe, servings: newServings, ingredients: scaledIngredients }
+        const updated = {...localRecipe, servings: newServings, ingredients: scaledIngredients}
         setLocalRecipe(updated)
-        await axios.put(routerConfig.API.UPDATE_RECIPE(updated.id), updated, { withCredentials: true })
+        await axios.put(routerConfig.API.UPDATE_RECIPE(updated.id), updated, {withCredentials: true})
+
+        if (inShopping) {
+            await addToShoppingList(updated)
+        }
     }
 
     return (
         <div className="detail-card">
-            <RecipeCover name={localRecipe.name} />
+            <RecipeCover name={localRecipe.name}/>
             <h2 className="detail-title">{localRecipe.name}</h2>
 
             <div className="detail-section servings-control">
                 <span className="detail-section-title">Portionen:</span>
                 <div className="servings-box">
-                    <button
-                        className="servings-btn"
-                        onClick={() => scaleServings(localRecipe.servings - 1)}
-                    >
-                        –
-                    </button>
+                    <button className="servings-btn" onClick={() => scaleServings(localRecipe.servings - 1)}>–</button>
                     <span className="servings-value">{localRecipe.servings}</span>
-                    <button
-                        className="servings-btn"
-                        onClick={() => scaleServings(localRecipe.servings + 1)}
-                    >
-                        +
-                    </button>
+                    <button className="servings-btn" onClick={() => scaleServings(localRecipe.servings + 1)}>+</button>
                 </div>
             </div>
 
@@ -84,21 +81,17 @@ export default function RecipeDetailCard({
             <div className="detail-section">
                 <h3 className="detail-section-title">Zubereitung:</h3>
                 <div className="description-box">
-                    {localRecipe.description ? (
-                        <p>{localRecipe.description}</p>
-                    ) : (
-                        <p>Keine Beschreibung vorhanden.</p>
-                    )}
+                    {localRecipe.description ? <p>{localRecipe.description}</p> : <p>Keine Beschreibung vorhanden.</p>}
                 </div>
             </div>
 
-            <div className="divider" />
+            <div className="divider"/>
 
             <div className="button-row">
-                <FavButton isFav={isFav} onClick={onFavorite} />
-                <EditButton onClick={onEdit} />
-                <DeleteButton onClick={onDelete} />
-                <ShoppingButton onClick={onAddToShopping} />
+                <FavButton isFav={isFav} onClick={onFavorite}/>
+                <EditButton onClick={onEdit}/>
+                <DeleteButton onClick={onDelete}/>
+                <ShoppingButton isActive={inShopping} onClick={onAddToShopping}/>
             </div>
         </div>
     )
