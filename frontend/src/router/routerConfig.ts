@@ -23,6 +23,9 @@ type API = {
     UPDATE_RECIPE: (id: string) => string
     FAVORITES: string
     FAVORITES_TOGGLE: (id: string) => string
+    SHOPPING_LIST: string
+    SHOPPING_LIST_ADD: string
+    SHOPPING_LIST_REMOVE: (recipeId: string) => string
     AUTH_USER: string
     GITHUB_AUTH: string
     LOGOUT: string
@@ -41,6 +44,7 @@ export const routerConfig: RouterConfig = {
         FAVORITES: "/favorites",
         SHOPPING_LIST: "/shopping-list"
     },
+
     API: {
         RECIPES: "/api/recipes",
         RECIPE_ID: (id: string) => `/api/recipes/${id}`,
@@ -48,6 +52,9 @@ export const routerConfig: RouterConfig = {
         UPDATE_RECIPE: (id: string) => `/api/recipes/${id}`,
         FAVORITES: "/api/favorites/recipes",
         FAVORITES_TOGGLE: (id: string) => `/api/favorites/${id}/toggle`,
+        SHOPPING_LIST: "/api/shopping-list",
+        SHOPPING_LIST_ADD: "/api/shopping-list/add",
+        SHOPPING_LIST_REMOVE: (recipeId: string) => `/api/shopping-list/recipe/${recipeId}`,
         AUTH_USER: "/api/auth/me",
         GITHUB_AUTH: "/oauth2/authorization/github",
         LOGOUT: "/logout"

@@ -1,4 +1,3 @@
-
 export type AppUser = {
     id: string;
     username: string;
@@ -22,4 +21,12 @@ export type Recipe = {
     ingredients: Ingredient[];
     coverUrl?: string;
 }
-
+export type ShoppingListItem = {
+    id: string;
+    recipeId: string;
+    ingredientId: string;
+    name: string;
+    amount: number;
+    unit: Unit;
+    done: boolean;
+};

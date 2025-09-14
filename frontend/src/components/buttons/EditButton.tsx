@@ -11,7 +11,7 @@ export default function EditButton({onClick}: Readonly<Props>) {
             className="action-btn"
             onClick={onClick}
         >
-            Edit ✏️
+            ✏️
         </button>
     );
 }
