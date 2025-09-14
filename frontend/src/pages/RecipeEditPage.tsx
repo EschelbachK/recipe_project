@@ -1,8 +1,9 @@
 import axios from "axios"
 import {useEffect, useState} from "react"
 import {useNavigate, useParams} from "react-router-dom"
-import type {Recipe, Ingredient} from "../types/types"
+import type {Recipe, Ingredient, ShoppingListItem} from "../types/types"
 import {routerConfig} from "../router/routerConfig"
+import {addToShoppingList} from "../services/shoppingService"
 import "./RecipeEditPage.css"
 
 export default function RecipeEditPage() {
@@ -26,6 +27,7 @@ export default function RecipeEditPage() {
     })
 
     const [editIndex, setEditIndex] = useState<number | null>(null)
+    const [inShopping, setInShopping] = useState(false)
 
     useEffect(() => {
         if (!isNew && id) {
@@ -34,6 +36,15 @@ export default function RecipeEditPage() {
                 .then(res => setRecipe(res.data))
                 .catch(() => {
                 })
+        }
+    }, [id, isNew])
+
+    useEffect(() => {
+        if (!isNew && id) {
+            axios
+                .get<ShoppingListItem[]>(routerConfig.API.SHOPPING_LIST, {withCredentials: true})
+                .then(res => setInShopping(res.data.some(i => i.recipeId === id)))
+                .catch(() => setInShopping(false))
         }
     }, [id, isNew])
 
@@ -73,10 +84,10 @@ export default function RecipeEditPage() {
         setCurrentIng({id: crypto.randomUUID(), name: "", amount: 0, unit: "G"})
     }
 
-    function removeIngredient(id: string) {
+    function removeIngredient(ingId: string) {
         setRecipe(prev => ({
             ...prev,
-            ingredients: prev.ingredients.filter(i => i.id !== id),
+            ingredients: prev.ingredients.filter(i => i.id !== ingId),
         }))
     }
 
@@ -98,6 +109,12 @@ export default function RecipeEditPage() {
             await axios.post(routerConfig.API.CREATE_RECIPE, dto, {withCredentials: true})
         } else if (id) {
             await axios.put(routerConfig.API.UPDATE_RECIPE(id), dto, {withCredentials: true})
+            if (inShopping) {
+                try {
+                    await addToShoppingList({...recipe, id})
+                } catch {
+                }
+            }
         }
 
         navigate(routerConfig.URL.RECIPES)
@@ -109,7 +126,6 @@ export default function RecipeEditPage() {
                 <h2 className="page-title">{isNew ? "Neues Rezept" : "Rezept bearbeiten"}</h2>
                 <div className="edit-box">
                     <form onSubmit={handleSubmit} className="edit-form">
-
                         <div className="form-row-inline">
                             <div className="input-group wide">
                                 <label htmlFor="name">Rezeptname:</label>
