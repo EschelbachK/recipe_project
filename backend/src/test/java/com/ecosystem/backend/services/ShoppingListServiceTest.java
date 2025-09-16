@@ -22,6 +22,8 @@ class ShoppingListServiceTest {
 
     @BeforeEach
     void setup() {
+
+        // GIVEN
         repository = mock(ShoppingListRepository.class);
         service = new ShoppingListService(repository);
     }
@@ -33,7 +35,7 @@ class ShoppingListServiceTest {
         when(repository.findAllByUserIdAndRecipeId(anyString(), anyString())).thenReturn(List.of());
         ShoppingListAddRequest req = new ShoppingListAddRequest(
                 "r1",
-                List.of(new ShoppingListAddRequest.IngredientPortion("ing1", "Tomate", new BigDecimal("200"), "g"))
+                List.of(new ShoppingListAddRequest.IngredientPortion("ing1", "Tomate", new BigDecimal("200"), "G"))
         );
 
         // WHEN
@@ -48,7 +50,7 @@ class ShoppingListServiceTest {
 
         // GIVEN
         ShoppingListItem existing = new ShoppingListItem(
-                "1", "default-user", "r1", "ing1", "Tomate", new BigDecimal("200"), "g", false
+                "1", "default-user", "r1", "ing1", "Tomate", new BigDecimal("200"), "G", false
         );
         when(repository.findByIdAndUserId(eq("1"), anyString())).thenReturn(Optional.of(existing));
         when(repository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -85,6 +87,7 @@ class ShoppingListServiceTest {
 
     @Test
     void deleteItemsByRecipe_deletesAll() {
+
         // GIVEN
         when(repository.findAllByUserIdAndRecipeId(anyString(), eq("r1")))
                 .thenReturn(List.of(new ShoppingListItem("1","user","r1","ing1","Tomate",BigDecimal.ONE,"G",false)));
@@ -95,5 +98,4 @@ class ShoppingListServiceTest {
         // THEN
         verify(repository).deleteAll(anyList());
     }
-
 }
