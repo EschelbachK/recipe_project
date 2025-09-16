@@ -7,7 +7,7 @@ import EditButton from "./buttons/EditButton"
 import DeleteButton from "./buttons/DeleteButton"
 import ShoppingButton from "./buttons/ShoppingButton"
 import {routerConfig} from "../router/routerConfig"
-import {addToShoppingList} from "../services/shoppingService"
+import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
 import "./RecipeDetailCard.css"
 
 type Props = {
@@ -30,6 +30,7 @@ export default function RecipeDetailCard({
                                              onAddToShopping,
                                          }: Readonly<Props>) {
     const [localRecipe, setLocalRecipe] = useState<Recipe>(recipe)
+    const [shopping, setShopping] = useState(inShopping)
 
     async function scaleServings(newServings: number) {
         if (newServings < 1) return
@@ -41,10 +42,20 @@ export default function RecipeDetailCard({
         const updated = {...localRecipe, servings: newServings, ingredients: scaledIngredients}
         setLocalRecipe(updated)
         await axios.put(routerConfig.API.UPDATE_RECIPE(updated.id), updated, {withCredentials: true})
-
-        if (inShopping) {
+        if (shopping) {
             await addToShoppingList(updated)
         }
+    }
+
+    async function handleShoppingClick() {
+        if (shopping) {
+            await removeFromShoppingList(localRecipe.id)
+            setShopping(false)
+        } else {
+            await addToShoppingList(localRecipe)
+            setShopping(true)
+        }
+        onAddToShopping()
     }
 
     return (
@@ -91,7 +102,7 @@ export default function RecipeDetailCard({
                 <FavButton isFav={isFav} onClick={onFavorite}/>
                 <EditButton onClick={onEdit}/>
                 <DeleteButton onClick={onDelete}/>
-                <ShoppingButton isActive={inShopping} onClick={onAddToShopping}/>
+                <ShoppingButton isActive={shopping} onClick={handleShoppingClick}/>
             </div>
         </div>
     )
