@@ -38,7 +38,7 @@ export default function ShoppingListPage() {
     }, [])
 
     function shareList() {
-        const text = items.map(i => `${i.amount} ${i.unit} ${i.name}`).join("\n")
+        const text = items.map(i => `${i.amount} ${i.unit.toLowerCase()} ${i.name}`).join("\n")
         const url = `https://wa.me/?text=${encodeURIComponent(text)}`
         window.open(url, "_blank")
     }
@@ -59,7 +59,7 @@ export default function ShoppingListPage() {
                     <ul className="shopping-list">
                         {items.map(i => (
                             <li key={i.id} className="shopping-item">
-                                <span>{i.amount} {i.unit} {i.name}</span>
+                                <span>{i.amount} {i.unit.toLowerCase()} {i.name}</span>
                                 <button className="remove-btn" onClick={() => removeItem(i.id)}>❌</button>
                             </li>
                         ))}
