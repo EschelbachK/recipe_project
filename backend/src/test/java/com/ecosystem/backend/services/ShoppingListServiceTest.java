@@ -33,7 +33,6 @@ class ShoppingListServiceTest {
 
         // GIVEN
         when(repository.findAllByUserIdAndRecipeId(anyString(), anyString())).thenReturn(List.of());
-        when(repository.findByUserIdAndNameAndUnit(anyString(), anyString(), anyString())).thenReturn(Optional.empty());
         ShoppingListAddRequest req = new ShoppingListAddRequest(
                 "r1",
                 List.of(new ShoppingListAddRequest.IngredientPortion("ing1", "Tomate", new BigDecimal("200"), "G"))
@@ -47,29 +46,17 @@ class ShoppingListServiceTest {
     }
 
     @Test
-    void addExistingItemAccumulatesAmount() {
+    void getListSumsItemsByNameAndUnit() {
 
         // GIVEN
-        ShoppingListItem existing = new ShoppingListItem(
-                "1", "default-user", "r1", "ing1", "Tomate", new BigDecimal("100"), "G", false
-        );
-        ShoppingListItem updated = new ShoppingListItem(
-                "1", "default-user", "r1", "ing1", "Tomate", new BigDecimal("300"), "G", false
-        );
-        when(repository.findAllByUserIdAndRecipeId(anyString(), anyString())).thenReturn(List.of());
-        when(repository.findByUserIdAndNameAndUnit(anyString(), eq("Tomate"), eq("G"))).thenReturn(Optional.of(existing));
-        when(repository.save(any())).thenReturn(updated);
-        when(repository.findAllByUserId(anyString())).thenReturn(List.of(updated));
-        ShoppingListAddRequest req = new ShoppingListAddRequest(
-                "r1",
-                List.of(new ShoppingListAddRequest.IngredientPortion("ing1", "Tomate", new BigDecimal("200"), "G"))
-        );
+        ShoppingListItem i1 = new ShoppingListItem("1", "user", "r1", "ing1", "Tomate", new BigDecimal("100"), "G", false);
+        ShoppingListItem i2 = new ShoppingListItem("2", "user", "r2", "ing2", "Tomate", new BigDecimal("200"), "G", false);
+        when(repository.findAllByUserId(anyString())).thenReturn(List.of(i1, i2));
 
         // WHEN
-        List<ShoppingListItem> result = service.addItems(req);
+        List<ShoppingListItem> result = service.getList();
 
         // THEN
-        verify(repository).save(any(ShoppingListItem.class));
         assertEquals(1, result.size());
         assertEquals(new BigDecimal("300"), result.getFirst().amount());
     }
