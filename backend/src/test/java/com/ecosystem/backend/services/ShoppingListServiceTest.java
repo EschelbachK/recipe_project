@@ -33,6 +33,7 @@ class ShoppingListServiceTest {
 
         // GIVEN
         when(repository.findAllByUserIdAndRecipeId(anyString(), anyString())).thenReturn(List.of());
+        when(repository.findByUserIdAndNameAndUnit(anyString(), anyString(), anyString())).thenReturn(Optional.empty());
         ShoppingListAddRequest req = new ShoppingListAddRequest(
                 "r1",
                 List.of(new ShoppingListAddRequest.IngredientPortion("ing1", "Tomate", new BigDecimal("200"), "G"))
@@ -42,7 +43,35 @@ class ShoppingListServiceTest {
         service.addItems(req);
 
         // THEN
-        verify(repository, times(1)).save(any(ShoppingListItem.class));
+        verify(repository).save(any(ShoppingListItem.class));
+    }
+
+    @Test
+    void addExistingItemAccumulatesAmount() {
+
+        // GIVEN
+        ShoppingListItem existing = new ShoppingListItem(
+                "1", "default-user", "r1", "ing1", "Tomate", new BigDecimal("100"), "G", false
+        );
+        ShoppingListItem updated = new ShoppingListItem(
+                "1", "default-user", "r1", "ing1", "Tomate", new BigDecimal("300"), "G", false
+        );
+        when(repository.findAllByUserIdAndRecipeId(anyString(), anyString())).thenReturn(List.of());
+        when(repository.findByUserIdAndNameAndUnit(anyString(), eq("Tomate"), eq("G"))).thenReturn(Optional.of(existing));
+        when(repository.save(any())).thenReturn(updated);
+        when(repository.findAllByUserId(anyString())).thenReturn(List.of(updated));
+        ShoppingListAddRequest req = new ShoppingListAddRequest(
+                "r1",
+                List.of(new ShoppingListAddRequest.IngredientPortion("ing1", "Tomate", new BigDecimal("200"), "G"))
+        );
+
+        // WHEN
+        List<ShoppingListItem> result = service.addItems(req);
+
+        // THEN
+        verify(repository).save(any(ShoppingListItem.class));
+        assertEquals(1, result.size());
+        assertEquals(new BigDecimal("300"), result.get(0).amount());
     }
 
     @Test
@@ -90,7 +119,7 @@ class ShoppingListServiceTest {
 
         // GIVEN
         when(repository.findAllByUserIdAndRecipeId(anyString(), eq("r1")))
-                .thenReturn(List.of(new ShoppingListItem("1","user","r1","ing1","Tomate",BigDecimal.ONE,"G",false)));
+                .thenReturn(List.of(new ShoppingListItem("1", "user", "r1", "ing1", "Tomate", BigDecimal.ONE, "G", false)));
 
         // WHEN
         service.deleteItemsByRecipe("r1");
