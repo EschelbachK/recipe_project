@@ -43,6 +43,7 @@ export default function RecipeDetailCard({
         setLocalRecipe(updated)
         await axios.put(routerConfig.API.UPDATE_RECIPE(updated.id), updated, {withCredentials: true})
         if (shopping) {
+            await removeFromShoppingList(localRecipe.id)
             await addToShoppingList(updated)
         }
     }
