@@ -109,7 +109,7 @@ class RecipeServiceTest {
                 2.0,
                 List.of(
                         new Ingredient("i1", "Reis", 150.0, Unit.G),
-                        new Ingredient(null, "Avocado", 1.0, Unit.PIECE)
+                        new Ingredient(null, "Avocado", 120.0, Unit.G)
                 ),
                 "Beschreibung"
         );
@@ -120,7 +120,7 @@ class RecipeServiceTest {
                 2.0,
                 List.of(
                         new Ingredient("i1", "Reis", 150.0, Unit.G),
-                        new Ingredient("geni2", "Avocado", 1.0, Unit.PIECE)
+                        new Ingredient("geni2", "Avocado", 120.0, Unit.G)
                 ),
                 "Beschreibung"
         );
@@ -169,7 +169,7 @@ class RecipeServiceTest {
                 "Toast",
                 1.0,
                 List.of(
-                        new Ingredient("i1", "Brot", 2.0, Unit.PIECE),
+                        new Ingredient("i1", "Brot", 200.0, Unit.G),
                         new Ingredient("i2", "Butter", 15.0, Unit.G)
                 ),
                 "Beschreibung"
@@ -237,8 +237,8 @@ class RecipeServiceTest {
                 "Toast",
                 1.0,
                 List.of(
-                        new Ingredient("i1", "Brot", 2.0, Unit.PIECE),
-                        new Ingredient("i2", "Käse", 1.0, Unit.PIECE)
+                        new Ingredient("i1", "Brot", 200.0, Unit.G),
+                        new Ingredient("i2", "Käse", 50.0, Unit.G)
                 ),
                 "Beschreibung"
         );
@@ -248,8 +248,8 @@ class RecipeServiceTest {
                 "Toast",
                 1.0,
                 List.of(
-                        new Ingredient("i1", "Brot", 2.0, Unit.PIECE),
-                        new Ingredient("i2", "Käse", 1.0, Unit.PIECE)
+                        new Ingredient("i1", "Brot", 200.0, Unit.G),
+                        new Ingredient("i2", "Käse", 50.0, Unit.G)
                 ),
                 "Beschreibung"
         );

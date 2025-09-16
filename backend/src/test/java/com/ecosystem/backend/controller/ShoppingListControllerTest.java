@@ -30,6 +30,8 @@ class ShoppingListControllerTest {
 
     @BeforeEach
     void clearDb() {
+
+        // GIVEN
         shoppingListRepo.deleteAll();
     }
 
@@ -101,6 +103,7 @@ class ShoppingListControllerTest {
         mockMvc.perform(delete("/api/shopping-list/" + existing.id()))
                 .andExpect(status().isNoContent());
     }
+
     @Test
     void deleteItemsByRecipe() throws Exception {
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -32,26 +33,49 @@ public class ShoppingListService {
         repository.deleteAll(oldItems);
 
         for (ShoppingListAddRequest.IngredientPortion p : request.items()) {
-            ShoppingListItem created = new ShoppingListItem(
-                    UUID.randomUUID().toString(), userId, request.recipeId(),
-                    p.ingredientId(), p.name(), p.amount(), p.unit(), false
-            );
-            repository.save(created);
+            Optional<ShoppingListItem> existing = repository.findByUserIdAndNameAndUnit(userId, p.name(), p.unit());
+            if (existing.isPresent()) {
+                ShoppingListItem item = existing.get();
+                BigDecimal newAmount = item.amount().add(p.amount());
+                ShoppingListItem updated = new ShoppingListItem(
+                        item.id(), userId, item.recipeId(),
+                        item.ingredientId(), item.name(),
+                        newAmount, item.unit(), item.done()
+                );
+                repository.save(updated);
+            } else {
+                ShoppingListItem created = new ShoppingListItem(
+                        UUID.randomUUID().toString(), userId, request.recipeId(),
+                        p.ingredientId(), p.name(), p.amount(), p.unit(), false
+                );
+                repository.save(created);
+            }
         }
         return getList();
     }
 
     public ShoppingListItem updateItem(String id, ShoppingListUpdateRequest request) {
         String userId = getCurrentUserId();
+
         ShoppingListItem item = repository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ShoppingListItemNotFoundException(id));
-        BigDecimal amount = request.amount() != null ? request.amount() : item.amount();
-        boolean done = request.done() != null ? request.done() : item.done();
+
+        BigDecimal amount = item.amount();
+        if (request.amount() != null) {
+            amount = request.amount();
+        }
+
+        boolean done = item.done();
+        if (request.done() != null) {
+            done = request.done();
+        }
+
         ShoppingListItem updated = new ShoppingListItem(
                 item.id(), userId, item.recipeId(),
                 item.ingredientId(), item.name(),
                 amount, item.unit(), done
         );
+
         return repository.save(updated);
     }
 

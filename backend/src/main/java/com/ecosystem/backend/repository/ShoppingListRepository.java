@@ -10,4 +10,5 @@ public interface ShoppingListRepository extends MongoRepository<ShoppingListItem
     List<ShoppingListItem> findAllByUserId(String userId);
     Optional<ShoppingListItem> findByIdAndUserId(String id, String userId);
     List<ShoppingListItem> findAllByUserIdAndRecipeId(String userId, String recipeId);
+    Optional<ShoppingListItem> findByUserIdAndNameAndUnit(String userId, String name, String unit);
 }
