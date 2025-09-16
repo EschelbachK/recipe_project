@@ -10,9 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ShoppingListService {
@@ -24,7 +22,30 @@ public class ShoppingListService {
     }
 
     public List<ShoppingListItem> getList() {
-        return repository.findAllByUserId(getCurrentUserId());
+        String userId = getCurrentUserId();
+        List<ShoppingListItem> allItems = repository.findAllByUserId(userId);
+
+        Map<String, ShoppingListItem> grouped = new HashMap<>();
+        for (ShoppingListItem item : allItems) {
+            String key = item.name() + "|" + item.unit();
+            if (grouped.containsKey(key)) {
+                ShoppingListItem existing = grouped.get(key);
+                BigDecimal newAmount = existing.amount().add(item.amount());
+                grouped.put(key, new ShoppingListItem(
+                        existing.id(), userId, existing.recipeId(),
+                        existing.ingredientId(), existing.name(),
+                        newAmount, existing.unit(), existing.done()
+                ));
+            } else {
+                grouped.put(key, new ShoppingListItem(
+                        item.id(), userId, item.recipeId(),
+                        item.ingredientId(), item.name(),
+                        item.amount(), item.unit(), item.done()
+                ));
+            }
+        }
+
+        return new ArrayList<>(grouped.values());
     }
 
     public List<ShoppingListItem> addItems(ShoppingListAddRequest request) {
@@ -33,30 +54,18 @@ public class ShoppingListService {
         repository.deleteAll(oldItems);
 
         for (ShoppingListAddRequest.IngredientPortion p : request.items()) {
-            Optional<ShoppingListItem> existing = repository.findByUserIdAndNameAndUnit(userId, p.name(), p.unit());
-            if (existing.isPresent()) {
-                ShoppingListItem item = existing.get();
-                BigDecimal newAmount = item.amount().add(p.amount());
-                ShoppingListItem updated = new ShoppingListItem(
-                        item.id(), userId, item.recipeId(),
-                        item.ingredientId(), item.name(),
-                        newAmount, item.unit(), item.done()
-                );
-                repository.save(updated);
-            } else {
-                ShoppingListItem created = new ShoppingListItem(
-                        UUID.randomUUID().toString(), userId, request.recipeId(),
-                        p.ingredientId(), p.name(), p.amount(), p.unit(), false
-                );
-                repository.save(created);
-            }
+            ShoppingListItem created = new ShoppingListItem(
+                    UUID.randomUUID().toString(), userId, request.recipeId(),
+                    p.ingredientId(), p.name(), p.amount(), p.unit(), false
+            );
+            repository.save(created);
         }
+
         return getList();
     }
 
     public ShoppingListItem updateItem(String id, ShoppingListUpdateRequest request) {
         String userId = getCurrentUserId();
-
         ShoppingListItem item = repository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ShoppingListItemNotFoundException(id));
 
