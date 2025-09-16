@@ -4,6 +4,7 @@ import {useNavigate, useParams} from "react-router-dom"
 import type {Recipe, ShoppingListItem} from "../types/types"
 import {routerConfig} from "../router/routerConfig"
 import RecipeDetailCard from "../components/RecipeDetailCard"
+import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
 import "./RecipeDetailPage.css"
 
 export default function RecipeDetailPage() {
@@ -61,9 +62,7 @@ export default function RecipeDetailPage() {
 
     async function handleFavorite() {
         if (!recipe) return
-
         setIsFav(prev => !prev)
-
         try {
             await axios.post(routerConfig.API.FAVORITES_TOGGLE(recipe.id), {}, {withCredentials: true})
         } catch {
@@ -72,8 +71,19 @@ export default function RecipeDetailPage() {
         }
     }
 
-    function handleAddToShopping() {
-        alert("Einkaufsliste ist bald verfügbar!")
+    async function handleAddToShopping() {
+        if (!recipe) return
+        try {
+            if (inShopping) {
+                await removeFromShoppingList(recipe.id)
+                setInShopping(false)
+            } else {
+                await addToShoppingList(recipe)
+                setInShopping(true)
+            }
+        } catch {
+            alert("Einkaufsliste konnte nicht aktualisiert werden.")
+        }
     }
 
     if (loading) return <p className="loading">Lade...</p>
