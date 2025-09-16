@@ -51,7 +51,6 @@ export default function ShoppingListPage() {
             <div className="overview-header">
                 <h2>Meine Einkaufsliste</h2>
             </div>
-
             <div className="shopping-list-box">
                 {items.length === 0 ? (
                     <p>Keine Zutaten in der Einkaufsliste.</p>
@@ -65,7 +64,6 @@ export default function ShoppingListPage() {
                         ))}
                     </ul>
                 )}
-
                 <div className="shopping-list-footer">
                     <button className="share-btn" onClick={shareList}>In WhatsApp teilen?</button>
                 </div>

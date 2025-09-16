@@ -30,10 +30,7 @@ public class ShoppingListController {
     }
 
     @PutMapping("/{id}")
-    public ShoppingListItem updateItem(
-            @PathVariable String id,
-            @RequestBody ShoppingListUpdateRequest request
-    ) {
+    public ShoppingListItem updateItem(@PathVariable String id, @RequestBody ShoppingListUpdateRequest request) {
         return service.updateItem(id, request);
     }
 
