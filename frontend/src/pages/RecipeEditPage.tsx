@@ -173,11 +173,8 @@ export default function RecipeEditPage() {
                                         value={currentIng.unit}
                                         onChange={handleIngredient}
                                     >
-                                        <option>KG</option>
-                                        <option>G</option>
-                                        <option>ML</option>
-                                        <option>L</option>
-                                        <option>PIECE</option>
+                                        <option value="G">Gramm (g)</option>
+                                        <option value="ML">Milliliter (ml)</option>
                                     </select>
                                     <button type="button" onClick={addOrUpdateIngredient}>
                                         {editIndex !== null ? "✔" : "+"}
