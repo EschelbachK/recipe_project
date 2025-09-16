@@ -71,7 +71,7 @@ class ShoppingListServiceTest {
         // THEN
         verify(repository).save(any(ShoppingListItem.class));
         assertEquals(1, result.size());
-        assertEquals(new BigDecimal("300"), result.get(0).amount());
+        assertEquals(new BigDecimal("300"), result.getFirst().amount());
     }
 
     @Test
