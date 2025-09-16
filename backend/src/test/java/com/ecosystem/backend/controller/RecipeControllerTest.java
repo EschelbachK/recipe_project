@@ -57,7 +57,7 @@ class RecipeControllerTest {
                   "ingredients": [
                     {"name": "Kartoffeln", "amount": 800.0, "unit": "G"},
                     {"name": "Essiggurken", "amount": 120.0, "unit": "G"},
-                    {"name": "Zwiebel", "amount": 1.0, "unit": "PIECE"}
+                    {"name": "Zwiebel", "amount": 100.0, "unit": "G"}
                   ],
                   "description": "Klassischer Kartoffelsalat mit Essig-Öl-Dressing"
                 }
@@ -92,7 +92,7 @@ class RecipeControllerTest {
                 2.0,
                 List.of(
                         new Ingredient("i1", "Tomaten", 400.0, Unit.G),
-                        new Ingredient("i2", "Zwiebel", 1.0, Unit.PIECE)
+                        new Ingredient("i2", "Zwiebel", 100.0, Unit.G)
                 ),
                 "Einfache Suppe"
         );
@@ -104,13 +104,14 @@ class RecipeControllerTest {
                   "servings": 3,
                   "ingredients": [
                     {"id": "i1", "name": "Tomaten", "amount": 600.0, "unit": "G"},
-                    {"id": "i2", "name": "Zwiebel", "amount": 1.0, "unit": "PIECE"},
-                    {"name": "Knoblauch", "amount": 1.0, "unit": "PIECE"}
+                    {"id": "i2", "name": "Zwiebel", "amount": 100.0, "unit": "G"},
+                    {"name": "Knoblauch", "amount": 50.0, "unit": "G"}
                   ],
                   "description": "Tomatensuppe mit Ofenaroma"
                 }
                 """;
 
+        // WHEN+THEN
         mockMvc.perform(put("/api/recipes/r1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateJson))
@@ -140,7 +141,7 @@ class RecipeControllerTest {
                 List.of(
                         new Ingredient("i1", "Rote Linsen", 250.0, Unit.G),
                         new Ingredient("i2", "Kokosmilch", 400.0, Unit.ML),
-                        new Ingredient("i3", "Zwiebel", 1.0, Unit.PIECE)
+                        new Ingredient("i3", "Zwiebel", 100.0, Unit.G)
                 ),
                 "Cremiges Curry"
         );
@@ -180,7 +181,7 @@ class RecipeControllerTest {
                 "Brotzeit",
                 1.0,
                 List.of(
-                        new Ingredient("i1", "Brot", 2.0, Unit.PIECE),
+                        new Ingredient("i1", "Brot", 200.0, Unit.G),
                         new Ingredient("i2", "Käse", 80.0, Unit.G)
                 ),
                 "Einfach und gut"
