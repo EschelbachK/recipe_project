@@ -2,6 +2,7 @@ import {useEffect, useState} from "react"
 import axios from "axios"
 import {routerConfig} from "../router/routerConfig"
 import type {ShoppingListItem} from "../types/types"
+import LoadingSpinner from "../components/LoadingSpinner"
 import "./ShoppingListPage.css"
 
 export default function ShoppingListPage() {
@@ -43,8 +44,15 @@ export default function ShoppingListPage() {
         window.open(url, "_blank")
     }
 
-    if (loading) return <p>Lade Einkaufsliste...</p>
-    if (error) return <p>{error}</p>
+    if (loading) {
+        return (
+            <div className="page-center">
+                <LoadingSpinner size={50} />
+            </div>
+        )
+    }
+
+    if (error) return <p className="error">{error}</p>
 
     return (
         <div className="overview-page">
