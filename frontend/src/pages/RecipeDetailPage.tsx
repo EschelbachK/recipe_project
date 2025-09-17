@@ -5,6 +5,7 @@ import type {Recipe, ShoppingListItem} from "../types/types"
 import {routerConfig} from "../router/routerConfig"
 import RecipeDetailCard from "../components/RecipeDetailCard"
 import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
+import LoadingSpinner from "../components/LoadingSpinner"
 import "./RecipeDetailPage.css"
 
 export default function RecipeDetailPage() {
@@ -86,7 +87,14 @@ export default function RecipeDetailPage() {
         }
     }
 
-    if (loading) return <p className="loading">Lade...</p>
+    if (loading) {
+        return (
+            <div className="page-center">
+                <LoadingSpinner size={50} />
+            </div>
+        )
+    }
+
     if (error) {
         return (
             <div className="error-box">
@@ -95,6 +103,7 @@ export default function RecipeDetailPage() {
             </div>
         )
     }
+
     if (!recipe) return <p>Kein Rezept.</p>
 
     return (
