@@ -5,6 +5,7 @@ import type {Recipe, ShoppingListItem} from "../types/types"
 import {routerConfig} from "../router/routerConfig"
 import RecipeGallery from "../components/RecipeGallery"
 import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
+import LoadingSpinner from "../components/LoadingSpinner"
 import "./RecipesOverviewPage.css"
 
 export default function RecipesOverviewPage() {
@@ -39,7 +40,6 @@ export default function RecipesOverviewPage() {
     }, [])
 
     async function toggleFavorite(id: string) {
-        // ✅ Optimistisch updaten
         setFavoriteIds(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id])
         try {
             await axios.post(routerConfig.API.FAVORITES_TOGGLE(id), {}, {withCredentials: true})
@@ -85,7 +85,11 @@ export default function RecipesOverviewPage() {
             <div className="overview-header">
                 <h2>Meine Rezepte</h2>
             </div>
-            {loading && <p className="loading">Lade Rezepte...</p>}
+            {loading && (
+                <div className="page-center">
+                    <LoadingSpinner size={50} />
+                </div>
+            )}
             {error && <p className="error">{error}</p>}
             {!loading && !error && (
                 <RecipeGallery
