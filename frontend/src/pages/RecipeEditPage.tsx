@@ -4,6 +4,7 @@ import {useNavigate, useParams} from "react-router-dom"
 import type {Recipe, Ingredient, ShoppingListItem} from "../types/types"
 import {routerConfig} from "../router/routerConfig"
 import {addToShoppingList} from "../services/shoppingService"
+import LoadingSpinner from "../components/LoadingSpinner"
 import "./RecipeEditPage.css"
 
 export default function RecipeEditPage() {
@@ -28,14 +29,15 @@ export default function RecipeEditPage() {
 
     const [editIndex, setEditIndex] = useState<number | null>(null)
     const [inShopping, setInShopping] = useState(false)
+    const [loading, setLoading] = useState(!isNew)
 
     useEffect(() => {
         if (!isNew && id) {
+            setLoading(true)
             axios
                 .get<Recipe>(routerConfig.API.RECIPE_ID(id), {withCredentials: true})
                 .then(res => setRecipe(res.data))
-                .catch(() => {
-                })
+                .finally(() => setLoading(false))
         }
     }, [id, isNew])
 
@@ -118,6 +120,14 @@ export default function RecipeEditPage() {
         }
 
         navigate(routerConfig.URL.RECIPES)
+    }
+
+    if (loading) {
+        return (
+            <div className="page-center">
+                <LoadingSpinner size={50} />
+            </div>
+        )
     }
 
     return (
