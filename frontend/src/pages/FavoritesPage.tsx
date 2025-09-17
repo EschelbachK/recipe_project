@@ -5,6 +5,7 @@ import type {Recipe, ShoppingListItem} from "../types/types"
 import {routerConfig} from "../router/routerConfig"
 import RecipeGallery from "../components/RecipeGallery"
 import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
+import LoadingSpinner from "../components/LoadingSpinner"
 
 export default function FavoritesPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -70,7 +71,11 @@ export default function FavoritesPage() {
             <div className="overview-header">
                 <h2>Meine Favoriten</h2>
             </div>
-            {loading && <p className="loading">Lade Favoriten...</p>}
+            {loading && (
+                <div className="page-center">
+                    <LoadingSpinner size={50} />
+                </div>
+            )}
             {error && <p className="error">{error}</p>}
             {!loading && !error && (
                 <RecipeGallery
