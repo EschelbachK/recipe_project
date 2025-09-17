@@ -1,11 +1,11 @@
 import {Link} from "react-router-dom"
-import {routerConfig} from "../router/routerConfig"
-import type {Recipe} from "../types/types"
-import RecipeCover from "./RecipeCover"
-import FavButton from "./buttons/FavButton"
-import EditButton from "./buttons/EditButton"
-import DeleteButton from "./buttons/DeleteButton"
-import ShoppingButton from "./buttons/ShoppingButton"
+import {routerConfig} from "../../router/routerConfig.ts"
+import type {Recipe} from "../../types/types.ts"
+import RecipeCover from "./RecipeCover.tsx"
+import FavButton from "../buttons/FavButton.tsx"
+import EditButton from "../buttons/EditButton.tsx"
+import DeleteButton from "../buttons/DeleteButton.tsx"
+import ShoppingButton from "../buttons/ShoppingButton.tsx"
 import "./RecipeCard.css"
 
 type Props = {
@@ -36,7 +36,7 @@ export default function RecipeCard({
                 <RecipeCover name={recipe.name}/>
                 <div className="card-body">
                     <h3>{recipe.name}</h3>
-                    <p>Servings: {recipe.servings}</p>
+                    <p>Portionen: {recipe.servings}</p>
                 </div>
             </Link>
             <div className="card-actions">

@@ -13,6 +13,7 @@ export default function LoginPage() {
     return (
         <div className="login-page">
             <div className="login-box">
+                <h2>Willkommen bei Recipely!</h2>
                 <p>Bitte melde dich mit GitHub an!</p>
                 <button className="login-btn" onClick={login}>
                     GitHub Login

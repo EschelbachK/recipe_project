@@ -1,6 +1,6 @@
-import type {Recipe} from "../types/types"
-import RecipeCard from "./RecipeCard"
-import AddRecipeCard from "./AddRecipeCard"
+import type {Recipe} from "../../types/types.ts"
+import RecipeCard from "./RecipeCard.tsx"
+import AddRecipeCard from "./AddRecipeCard.tsx"
 import "./RecipeGallery.css"
 
 type Props = {
