@@ -6,6 +6,7 @@ import {routerConfig} from "../router/routerConfig"
 import RecipeGallery from "../components/RecipeGallery"
 import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
 import LoadingSpinner from "../components/LoadingSpinner"
+import {useToast} from "../components/ToastContext.tsx";
 
 export default function FavoritesPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -13,6 +14,7 @@ export default function FavoritesPage() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const navigate = useNavigate()
+    const {showToast} = useToast()
 
     async function loadFavorites() {
         setLoading(true)
@@ -26,6 +28,7 @@ export default function FavoritesPage() {
             setShoppingIds(shoppingRes.data.map(r => r.recipeId))
         } catch {
             setError("Fehler beim Laden der Favoriten!")
+            showToast("Favoriten konnten nicht geladen werden", "error")
         } finally {
             setLoading(false)
         }
@@ -40,14 +43,18 @@ export default function FavoritesPage() {
             setShoppingIds(prev => prev.filter(s => s !== recipe.id))
             try {
                 await removeFromShoppingList(recipe.id)
+                showToast("Von der Einkaufsliste entfernt!", "info")
             } catch {
+                showToast("Einkaufsliste konnte nicht aktualisiert werden!", "error")
                 await loadFavorites()
             }
         } else {
             setShoppingIds(prev => [...prev, recipe.id])
             try {
                 await addToShoppingList(recipe)
+                showToast("Zur Einkaufsliste hinzugefügt!", "success")
             } catch {
+                showToast("Einkaufsliste konnte nicht aktualisiert werden!", "error")
                 await loadFavorites()
             }
         }
@@ -57,7 +64,9 @@ export default function FavoritesPage() {
         setRecipes(prev => prev.filter(r => r.id !== id))
         try {
             await axios.post(routerConfig.API.FAVORITES_TOGGLE(id), {}, {withCredentials: true})
+            showToast("Favorit wurde entfernt!", "success")
         } catch {
+            showToast("Favorit konnte nicht geändert werden!", "error")
             await loadFavorites()
         }
     }
@@ -73,7 +82,7 @@ export default function FavoritesPage() {
             </div>
             {loading && (
                 <div className="page-center">
-                    <LoadingSpinner size={50} />
+                    <LoadingSpinner size={50}/>
                 </div>
             )}
             {error && <p className="error">{error}</p>}
@@ -90,7 +99,8 @@ export default function FavoritesPage() {
                         if (recipe) void toggleShopping(recipe)
                     }}
                     onEdit={editRecipe}
-                    onDelete={() => {}}
+                    onDelete={() => {
+                    }}
                 />
             )}
         </div>

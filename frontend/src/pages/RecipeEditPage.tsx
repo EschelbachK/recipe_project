@@ -6,6 +6,7 @@ import {routerConfig} from "../router/routerConfig"
 import {addToShoppingList} from "../services/shoppingService"
 import LoadingSpinner from "../components/LoadingSpinner"
 import "./RecipeEditPage.css"
+import {useToast} from "../components/ToastContext.tsx";
 
 export default function RecipeEditPage() {
     const {id} = useParams<{ id: string }>()
@@ -30,6 +31,7 @@ export default function RecipeEditPage() {
     const [editIndex, setEditIndex] = useState<number | null>(null)
     const [inShopping, setInShopping] = useState(false)
     const [loading, setLoading] = useState(!isNew)
+    const {showToast} = useToast()
 
     useEffect(() => {
         if (!isNew && id) {
@@ -107,25 +109,31 @@ export default function RecipeEditPage() {
             ingredients: recipe.ingredients,
         }
 
-        if (isNew) {
-            await axios.post(routerConfig.API.CREATE_RECIPE, dto, {withCredentials: true})
-        } else if (id) {
-            await axios.put(routerConfig.API.UPDATE_RECIPE(id), dto, {withCredentials: true})
-            if (inShopping) {
-                try {
-                    await addToShoppingList({...recipe, id})
-                } catch {
+        try {
+            if (isNew) {
+                await axios.post(routerConfig.API.CREATE_RECIPE, dto, {withCredentials: true})
+                showToast("Rezept wurde gespeichert!", "success")
+            } else if (id) {
+                await axios.put(routerConfig.API.UPDATE_RECIPE(id), dto, {withCredentials: true})
+                showToast("Rezept wurde gespeichert!", "success")
+                if (inShopping) {
+                    try {
+                        await addToShoppingList({...recipe, id})
+                    } catch {
+                        showToast("Einkaufsliste konnte nicht aktualisiert werden!", "error")
+                    }
                 }
             }
+            navigate(routerConfig.URL.RECIPES)
+        } catch {
+            showToast("Rezept konnte nicht gespeichert werden!", "error")
         }
-
-        navigate(routerConfig.URL.RECIPES)
     }
 
     if (loading) {
         return (
             <div className="page-center">
-                <LoadingSpinner size={50} />
+                <LoadingSpinner size={50}/>
             </div>
         )
     }

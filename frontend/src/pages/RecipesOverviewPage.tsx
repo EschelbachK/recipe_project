@@ -7,6 +7,7 @@ import RecipeGallery from "../components/RecipeGallery"
 import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
 import LoadingSpinner from "../components/LoadingSpinner"
 import "./RecipesOverviewPage.css"
+import {useToast} from "../components/ToastContext.tsx";
 
 export default function RecipesOverviewPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -15,6 +16,7 @@ export default function RecipesOverviewPage() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const navigate = useNavigate()
+    const {showToast} = useToast()
 
     async function loadRecipes() {
         setLoading(true)
@@ -30,6 +32,7 @@ export default function RecipesOverviewPage() {
             setShoppingIds(shoppingRes.data.map(r => r.recipeId))
         } catch {
             setError("Fehler beim Laden der Rezepte!")
+            showToast("Fehler beim Laden der Rezepte!", "error")
         } finally {
             setLoading(false)
         }
@@ -40,10 +43,13 @@ export default function RecipesOverviewPage() {
     }, [])
 
     async function toggleFavorite(id: string) {
-        setFavoriteIds(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id])
+        const wasFav = favoriteIds.includes(id)
+        setFavoriteIds(prev => wasFav ? prev.filter(f => f !== id) : [...prev, id])
         try {
             await axios.post(routerConfig.API.FAVORITES_TOGGLE(id), {}, {withCredentials: true})
+            showToast(wasFav ? "Favorit wurde entfernt!" : "Favorit wurde hinzugefügt!", "success")
         } catch {
+            showToast("Favorit konnte nicht geändert werden!", "error")
             await loadRecipes()
         }
     }
@@ -53,14 +59,18 @@ export default function RecipesOverviewPage() {
             setShoppingIds(prev => prev.filter(s => s !== recipe.id))
             try {
                 await removeFromShoppingList(recipe.id)
+                showToast("Von der Einkaufsliste entfernt!", "info")
             } catch {
+                showToast("Einkaufsliste konnte nicht aktualisiert werden!", "error")
                 await loadRecipes()
             }
         } else {
             setShoppingIds(prev => [...prev, recipe.id])
             try {
                 await addToShoppingList(recipe)
+                showToast("Zur Einkaufsliste hinzugefügt!", "success")
             } catch {
+                showToast("Einkaufsliste konnte nicht aktualisiert werden!", "error")
                 await loadRecipes()
             }
         }
@@ -71,8 +81,9 @@ export default function RecipesOverviewPage() {
         try {
             await axios.delete(routerConfig.API.RECIPE_ID(id), {withCredentials: true})
             setRecipes(prev => prev.filter(r => r.id !== id))
+            showToast("Rezept wurde gelöscht!", "success")
         } catch {
-            alert("Rezept konnte nicht gelöscht werden.")
+            showToast("Rezept konnte nicht gelöscht werden!", "error")
         }
     }
 
@@ -87,7 +98,7 @@ export default function RecipesOverviewPage() {
             </div>
             {loading && (
                 <div className="page-center">
-                    <LoadingSpinner size={50} />
+                    <LoadingSpinner size={50}/>
                 </div>
             )}
             {error && <p className="error">{error}</p>}

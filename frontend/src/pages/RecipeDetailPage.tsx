@@ -7,6 +7,7 @@ import RecipeDetailCard from "../components/RecipeDetailCard"
 import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
 import LoadingSpinner from "../components/LoadingSpinner"
 import "./RecipeDetailPage.css"
+import {useToast} from "../components/ToastContext.tsx";
 
 export default function RecipeDetailPage() {
     const {id} = useParams<{ id: string }>()
@@ -17,6 +18,7 @@ export default function RecipeDetailPage() {
     const [inShopping, setInShopping] = useState(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const {showToast} = useToast()
 
     async function loadRecipe() {
         if (!id) return
@@ -36,6 +38,7 @@ export default function RecipeDetailPage() {
             if (s === 401) setError("Nicht eingeloggt.")
             else if (s === 404) setError("Rezept nicht gefunden.")
             else setError("Laden fehlgeschlagen.")
+            showToast("Fehler beim Laden des Rezepts", "error")
         } finally {
             setLoading(false)
         }
@@ -50,9 +53,10 @@ export default function RecipeDetailPage() {
         if (!confirm("Rezept löschen?")) return
         try {
             await axios.delete(routerConfig.API.RECIPE_ID(recipe.id), {withCredentials: true})
+            showToast("Rezept gelöscht", "success")
             navigate(routerConfig.URL.RECIPES)
         } catch {
-            alert("Löschen fehlgeschlagen.")
+            showToast("Rezept konnte nicht gelöscht werden!", "error")
         }
     }
 
@@ -63,11 +67,13 @@ export default function RecipeDetailPage() {
 
     async function handleFavorite() {
         if (!recipe) return
+        const wasFav = isFav
         setIsFav(prev => !prev)
         try {
             await axios.post(routerConfig.API.FAVORITES_TOGGLE(recipe.id), {}, {withCredentials: true})
+            showToast(wasFav ? "Favorit wurde entfernt!" : "Favorit wurde hinzugefügt!", "success")
         } catch {
-            alert("Favorit konnte nicht geändert werden.")
+            showToast("Favorit konnte nicht geändert werden!", "error")
             await loadRecipe()
         }
     }
@@ -78,19 +84,21 @@ export default function RecipeDetailPage() {
             if (inShopping) {
                 await removeFromShoppingList(recipe.id)
                 setInShopping(false)
+                showToast("Von der Einkaufsliste entfernt!", "info")
             } else {
                 await addToShoppingList(recipe)
                 setInShopping(true)
+                showToast("Zur Einkaufsliste hinzugefügt!", "success")
             }
         } catch {
-            alert("Einkaufsliste konnte nicht aktualisiert werden.")
+            showToast("Einkaufsliste konnte nicht aktualisiert werden!", "error")
         }
     }
 
     if (loading) {
         return (
             <div className="page-center">
-                <LoadingSpinner size={50} />
+                <LoadingSpinner size={50}/>
             </div>
         )
     }

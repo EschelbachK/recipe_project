@@ -4,11 +4,13 @@ import {routerConfig} from "../router/routerConfig"
 import type {ShoppingListItem} from "../types/types"
 import LoadingSpinner from "../components/LoadingSpinner"
 import "./ShoppingListPage.css"
+import {useToast} from "../components/ToastContext.tsx";
 
 export default function ShoppingListPage() {
     const [items, setItems] = useState<ShoppingListItem[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const {showToast} = useToast()
 
     async function loadShoppingList() {
         setLoading(true)
@@ -20,6 +22,7 @@ export default function ShoppingListPage() {
             setItems(res.data)
         } catch {
             setError("Einkaufsliste laden fehlgeschlagen.")
+            showToast("Einkaufsliste konnte nicht geladen werden!", "error")
         } finally {
             setLoading(false)
         }
@@ -29,8 +32,9 @@ export default function ShoppingListPage() {
         try {
             await axios.delete(routerConfig.API.SHOPPING_LIST_REMOVE(id), {withCredentials: true})
             setItems(prev => prev.filter(i => i.id !== id))
+            showToast("Zutat wurde entfernt!", "success")
         } catch {
-            alert("Entfernen fehlgeschlagen.")
+            showToast("Zutat konnte nicht entfernt werden!", "error")
         }
     }
 
@@ -42,12 +46,13 @@ export default function ShoppingListPage() {
         const text = items.map(i => `${i.amount} ${i.unit.toLowerCase()} ${i.name}`).join("\n")
         const url = `https://wa.me/?text=${encodeURIComponent(text)}`
         window.open(url, "_blank")
+        showToast("Liste in WhatsApp geöffnet!", "info")
     }
 
     if (loading) {
         return (
             <div className="page-center">
-                <LoadingSpinner size={50} />
+                <LoadingSpinner size={50}/>
             </div>
         )
     }
