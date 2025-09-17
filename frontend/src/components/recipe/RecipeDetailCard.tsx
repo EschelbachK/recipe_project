@@ -1,14 +1,14 @@
 import {useState} from "react"
 import axios from "axios"
-import type {Recipe} from "../types/types"
-import RecipeCover from "./RecipeCover"
-import FavButton from "./buttons/FavButton"
-import EditButton from "./buttons/EditButton"
-import DeleteButton from "./buttons/DeleteButton"
-import ShoppingButton from "./buttons/ShoppingButton"
-import {routerConfig} from "../router/routerConfig"
-import {addToShoppingList, removeFromShoppingList} from "../services/shoppingService"
-import "./RecipeDetailCard.css"
+import type {Recipe} from "../../types/types.ts"
+import RecipeCover from "./RecipeCover.tsx"
+import FavButton from "../buttons/FavButton.tsx"
+import EditButton from "../buttons/EditButton.tsx"
+import DeleteButton from "../buttons/DeleteButton.tsx"
+import ShoppingButton from "../buttons/ShoppingButton.tsx"
+import {routerConfig} from "../../router/routerConfig.ts"
+import {addToShoppingList, removeFromShoppingList} from "../../services/shoppingService.ts"
+import "./RecipeDetailcard.css"
 
 type Props = {
     recipe: Recipe

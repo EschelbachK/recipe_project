@@ -1,6 +1,6 @@
 import "./AddRecipeCard.css"
 import { useNavigate } from "react-router-dom"
-import { routerConfig } from "../router/routerConfig"
+import { routerConfig } from "../../router/routerConfig.ts"
 
 export default function AddRecipeCard() {
     const navigate = useNavigate()
