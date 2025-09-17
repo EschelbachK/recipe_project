@@ -1,13 +1,12 @@
 .footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.8rem 1.2rem;
     background: #91D6FF;
     color: #312e32;
+    text-align: center;
+    padding: 0.8rem 1.2rem;
     border-top: 2px solid #6ec7fa;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
-    height: 60px;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+    z-index: 2;
 }
