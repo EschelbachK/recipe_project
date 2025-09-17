@@ -1,16 +1,7 @@
-import {useState} from "react"
 import "./LoginPage.css"
-import {useToast} from "../components/ToastContext.tsx";
 
 export default function LoginPage() {
-    const [loading, setLoading] = useState(false)
-    const {showToast} = useToast()
-
     function login() {
-        if (loading) return
-        setLoading(true)
-        showToast("Weiterleitung zu GitHub…", "info")
-
         const host =
             window.location.host === "localhost:5173"
                 ? "http://localhost:8080"
@@ -22,9 +13,10 @@ export default function LoginPage() {
     return (
         <div className="login-page">
             <div className="login-box">
+                <h2>Willkommen bei Recipely!</h2>
                 <p>Bitte melde dich mit GitHub an!</p>
-                <button className="login-btn" onClick={login} disabled={loading}>
-                    {loading ? "Bitte warten…" : "GitHub Login"}
+                <button className="login-btn" onClick={login}>
+                    GitHub Login
                 </button>
             </div>
         </div>
