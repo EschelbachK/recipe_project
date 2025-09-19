@@ -1,4 +1,5 @@
 import {useState} from "react"
+import {useNavigate} from "react-router-dom"
 import axios from "axios"
 import type {Recipe} from "../../types/types.ts"
 import RecipeCover from "./RecipeCover.tsx"
@@ -31,6 +32,7 @@ export default function RecipeDetailCard({
                                          }: Readonly<Props>) {
     const [localRecipe, setLocalRecipe] = useState<Recipe>(recipe)
     const [shopping, setShopping] = useState(inShopping)
+    const navigate = useNavigate()
 
     async function scaleServings(newServings: number) {
         if (newServings < 1) return
@@ -67,9 +69,13 @@ export default function RecipeDetailCard({
             <div className="detail-section servings-control">
                 <span className="detail-section-title">Portionen:</span>
                 <div className="servings-box">
-                    <button className="servings-btn" onClick={() => scaleServings(localRecipe.servings - 1)}>–</button>
+                    <button className="servings-btn"
+                            onClick={() => scaleServings(localRecipe.servings - 1)}>–
+                    </button>
                     <span className="servings-value">{localRecipe.servings}</span>
-                    <button className="servings-btn" onClick={() => scaleServings(localRecipe.servings + 1)}>+</button>
+                    <button className="servings-btn"
+                            onClick={() => scaleServings(localRecipe.servings + 1)}>+
+                    </button>
                 </div>
             </div>
 
@@ -93,7 +99,9 @@ export default function RecipeDetailCard({
             <div className="detail-section">
                 <h3 className="detail-section-title">Zubereitung:</h3>
                 <div className="description-box">
-                    {localRecipe.description ? <p>{localRecipe.description}</p> : <p>Keine Beschreibung vorhanden.</p>}
+                    {localRecipe.description
+                        ? <p>{localRecipe.description}</p>
+                        : <p>Keine Beschreibung vorhanden.</p>}
                 </div>
             </div>
 
@@ -104,6 +112,14 @@ export default function RecipeDetailCard({
                 <EditButton onClick={onEdit}/>
                 <DeleteButton onClick={onDelete}/>
                 <ShoppingButton isActive={shopping} onClick={handleShoppingClick}/>
+
+                <button
+                    className="action-btn back"
+                    onClick={() => navigate(routerConfig.URL.RECIPES)}
+                    title="Zur Übersicht"
+                >
+                    Zur Übersicht
+                </button>
             </div>
         </div>
     )
