@@ -5,6 +5,7 @@
     padding: 0.8rem 1.2rem;
     background: #91D6FF;
     color: #312e32;
+    border: 1px solid rgba(0, 0, 0, 0.3);
     border-bottom: 2px solid #6ec7fa;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
@@ -41,6 +42,7 @@
     background: rgba(255, 255, 255, 0.6);
     padding: 0.4rem 0.8rem;
     border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
@@ -48,8 +50,8 @@
 }
 
 .avatar {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 2px solid #312e32;
     object-fit: cover;
@@ -58,7 +60,7 @@
 .logout-btn {
     background: linear-gradient(135deg, #f87171, #ef4444);
     color: white;
-    border: none;
+    border: 1px solid rgba(0, 0, 0, 0.3);
     padding: 0.5rem 1rem;
     border-radius: 999px;
     cursor: pointer;

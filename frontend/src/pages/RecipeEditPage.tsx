@@ -211,7 +211,7 @@ export default function RecipeEditPage() {
                                                 onClick={() => editIngredient(index)}>✏️
                                         </button>
                                         <button type="button" className="remove-btn"
-                                                onClick={() => removeIngredient(ing.id)}>x
+                                                onClick={() => removeIngredient(ing.id)}>
                                         </button>
                                     </div>
                                 </div>
@@ -219,7 +219,7 @@ export default function RecipeEditPage() {
                         </div>
 
                         <div className="form-row">
-                            <h3 className="section-title">Rezeptbeschreibung:</h3>
+                            <h3 className="section-title">Zubereitung:</h3>
                             <textarea
                                 id="description"
                                 name="description"

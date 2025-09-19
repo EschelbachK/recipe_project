@@ -1,7 +1,7 @@
 .action-btn {
     background: rgba(145, 214, 255, 0.52);
     color: #312e32;
-    border: none;
+    border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 8px;
     padding: 0.4rem 0.8rem;
     cursor: pointer;

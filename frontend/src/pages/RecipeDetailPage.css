@@ -1,6 +1,6 @@
 .detail-page {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     padding: var(--spacing-lg);
 }
 

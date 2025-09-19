@@ -72,7 +72,7 @@ export default function ShoppingListPage() {
                         {items.map(i => (
                             <li key={i.id} className="shopping-item">
                                 <span>{i.amount} {i.unit.toLowerCase()} {i.name}</span>
-                                <button className="remove-btn" onClick={() => removeItem(i.id)}>❌</button>
+                                <button className="remove-btn" onClick={() => removeItem(i.id)}></button>
                             </li>
                         ))}
                     </ul>

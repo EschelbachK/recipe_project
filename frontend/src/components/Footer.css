@@ -3,6 +3,7 @@
     color: #312e32;
     text-align: center;
     padding: 0.8rem 1.2rem;
+    border: 1px solid rgba(0, 0, 0, 0.3);
     border-top: 2px solid #6ec7fa;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;

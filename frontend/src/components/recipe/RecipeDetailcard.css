@@ -5,11 +5,13 @@
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     max-width: 800px;
-    margin: 2rem auto;
+    margin: 1rem 0 2rem 2rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     border: 1px solid #ddd;
+    height: auto;
+    min-height: unset;
 }
 
 .detail-title {
@@ -28,11 +30,6 @@
 .detail-section-title {
     font-size: 1.1rem;
     font-weight: bold;
-}
-
-.detail-plain {
-    font-size: 1rem;
-    padding-left: 0.1rem;
 }
 
 .ingredients-box {
@@ -56,10 +53,7 @@
 }
 
 .divider {
-    height: 1px;
-    background-color: #ccc;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    display: none;
 }
 
 .button-row {
@@ -67,11 +61,8 @@
     justify-content: center;
     gap: 0.75rem;
     flex-wrap: wrap;
-}
-
-p {
-    font-size: 1rem;
-    line-height: 1.5;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .servings-control {
