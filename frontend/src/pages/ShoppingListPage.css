@@ -54,7 +54,7 @@
 
 .shopping-item:hover {
     background: #f0f9ff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .shopping-item span {
@@ -65,7 +65,7 @@
 
 .remove-btn {
     background: #91D6FF;
-    border: none;
+    border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 8px;
     padding: 0.3rem 0.6rem;
     cursor: pointer;
@@ -88,7 +88,7 @@
 
 .share-btn {
     background: #91D6FF;
-    border: none;
+    border: 1px solid rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     padding: 0.6rem 1.2rem;
     cursor: pointer;
